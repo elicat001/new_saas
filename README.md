@@ -1,20 +1,78 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
 
-# Run and deploy your AI Studio app
+# 棠小一烘焙 (Tang Xiao Yi Baking) 
+### 商业级高保真点餐小程序前端系统
 
-This contains everything you need to run your app locally.
+[![React](https://img.shields.io/badge/React-19.0-blue.svg)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-skyblue.svg)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/Design-High--Fidelity-gold.svg)](#)
 
-View your app in AI Studio: https://ai.studio/apps/drive/1MhFCe_dobxENUDjXlew7sZ8EMMTYhRz1
+这是一个 1:1 深度还原的商业级烘焙点餐小程序前端应用。本项目专注于极致的 UI/UX 表现，通过精密排版、丝滑动画以及完善的交互逻辑，构建了一个从首页探索到支付结算的全链路体验。
 
-## Run Locally
+---
 
-**Prerequisites:**  Node.js
+## ✨ 核心特性
 
+### 1. 极致视觉设计 (Visual Excellence)
+- **品牌高度还原**：采用品牌标志性的 `#f7e28b` (棠小一黄) 作为核心点缀，结合高对比度的黑白灰基调。
+- **排版哲学**：大规模应用 `font-black` (900字重) 强化标题级配，辅以 `tracking-widest` 营造奢侈感与呼吸感。
+- **圆角与阴影**：统一使用 `48px/32px` 超大圆角容器，配合多层级柔和投影 (`shadow-soft`)，模拟 iOS 原生质感。
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 2. 完善的二级页面逻辑
+- **会员码中心**：集成动态模拟条形码与二维码，具备 60s 自动刷新倒计时逻辑。
+- **智能点餐系统**：支持堂食/外送/快递切换，包含规格选择弹窗、动态购物车计算及流畅的入篮动画。
+- **全渠道支付方案**：在结算页集成了 **微信支付**、**支付宝**、**云闪付/银行卡** 及 **余额支付**，视觉区分度极高。
+- **会员管理生态**：涵盖个人信息编辑（含保存状态反馈）、多地址管理、阶梯充值优惠及复古票券样式的券包系统。
+
+### 3. 卓越的交互体验 (UX)
+- **触觉反馈模拟**：全局封装 `active-scale` 动效，模拟物理按键的按压反馈。
+- **毛玻璃导航**：底部菜单采用高斯模糊 (`backdrop-blur`) 悬浮设计，在滚动时呈现通透的视觉层次。
+- **微信胶囊导航**：完美复刻微信小程序标志性的右上角胶囊控制按钮。
+
+---
+
+## 🛠 技术栈
+
+- **核心框架**: React 19 (ES Modules)
+- **样式引擎**: Tailwind CSS
+- **图标系统**: Lucide React (高精细度矢量图标)
+- **字体方案**: Noto Sans SC (思源黑体)
+- **组件模式**: 函数式组件 + Hooks 状态管理
+
+---
+
+## 📂 项目结构
+
+```text
+├── App.tsx             # 核心路由与全局布局管理器
+├── types.ts            # 全局类型定义（产品、订单、枚举等）
+├── index.html          # 基础 HTML5 模版与样式注入
+├── pages/
+│   ├── Home.tsx        # 品牌形象展示与快捷入口
+│   ├── Menu.tsx        # 分类点餐与购物车核心
+│   ├── Orders.tsx      # 订单历史与状态追踪
+│   ├── Profile.tsx     # 个人中心与会员等级
+│   ├── Checkout.tsx    # 结算中心与支付选择
+│   ├── MemberCode.tsx  # 动态会员权益核销
+│   └── ...             # 其他功能性二级页面
+└── metadata.json       # 项目元数据与权限配置
+```
+
+---
+
+## 🚀 交互指引
+
+1. **扫码点餐**：在首页点击“扫码点餐”或“堂食”即可进入点餐页。
+2. **选择规格**：在菜单中点击“选规格”可弹出精美的产品详情页，调整数量后加入购物车。
+3. **安全结算**：点击购物车底部的“Settle”进入结算页，支持多种支付渠道的模拟选择。
+4. **会员管理**：在“我的”页面可进入充值、地址管理及信息修改等二级模块。
+
+---
+
+## 🎨 设计哲学
+
+> "细节不是细节，细节就是设计本身。"
+
+本项目不仅是代码的堆砌，更是对小程序原生体验的深度解构。我们通过控制组件的 `z-index`、平滑的 `backdrop-filter` 以及响应式布局，确保了在各种屏幕尺寸下都能拥有“App-like”的流畅体验。
+
+---
+*© 2025 棠小一烘焙研发团队. 保留所有设计权利。*
