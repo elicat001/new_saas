@@ -19,16 +19,15 @@ const App: React.FC = () => {
   const [view, setView] = useState<'main' | 'order-detail' | 'member-code' | 'checkout' | 'user-info' | 'addresses' | 'top-up' | 'coupons'>('main');
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
-  // Mock status bar capsule
   const MiniProgramCapsule = () => (
-    <div className="fixed top-2 right-4 z-50 flex items-center gap-3 px-3 py-1.5 rounded-full wechat-capsule">
+    <div className="fixed top-6 right-4 z-[100] flex items-center gap-3 px-3 py-1.5 rounded-full wechat-capsule">
       <div className="flex gap-1">
-        <div className="w-1 h-1 bg-black rounded-full"></div>
+        <div className="w-1 h-1 bg-black rounded-full opacity-80"></div>
         <div className="w-1.5 h-1.5 bg-black rounded-full"></div>
-        <div className="w-1 h-1 bg-black rounded-full"></div>
+        <div className="w-1 h-1 bg-black rounded-full opacity-80"></div>
       </div>
       <div className="w-px h-3 bg-gray-300"></div>
-      <div className="w-4 h-4 border-2 border-black rounded-full flex items-center justify-center">
+      <div className="w-4 h-4 border-[1.5px] border-black rounded-full flex items-center justify-center">
         <div className="w-1.5 h-1.5 bg-black rounded-full"></div>
       </div>
     </div>
@@ -64,42 +63,42 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden">
+    <div className="h-screen w-full bg-white flex flex-col max-w-md mx-auto relative overflow-hidden font-sans shadow-2xl">
       <MiniProgramCapsule />
       
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto scrollbar-hide bg-[#F8F8F8]">
         {renderContent()}
       </div>
 
       {view === 'main' && (
-        <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] bg-white/90 backdrop-blur-md shadow-lg rounded-full px-6 py-2 flex justify-between items-center z-40 border border-gray-100">
+        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[380px] bg-white/95 backdrop-blur-lg shadow-[0_10px_30px_rgba(0,0,0,0.1)] rounded-full px-8 py-3 flex justify-between items-center z-50 border border-gray-100/50">
           <button 
             onClick={() => setCurrentTab(TabType.HOME)}
-            className={`flex flex-col items-center gap-0.5 transition-colors ${currentTab === TabType.HOME ? 'text-black' : 'text-gray-400'}`}
+            className={`flex flex-col items-center transition-all active:scale-90 ${currentTab === TabType.HOME ? 'text-black' : 'text-gray-300'}`}
           >
-            <HomeIcon size={22} strokeWidth={currentTab === TabType.HOME ? 2.5 : 2} />
-            <span className="text-[10px] font-medium">首页</span>
+            <HomeIcon size={24} strokeWidth={currentTab === TabType.HOME ? 2.5 : 2} />
+            <span className={`text-[10px] mt-0.5 font-bold ${currentTab === TabType.HOME ? 'block' : 'hidden'}`}>首页</span>
           </button>
           <button 
             onClick={() => setCurrentTab(TabType.MENU)}
-            className={`flex flex-col items-center gap-0.5 transition-colors ${currentTab === TabType.MENU ? 'text-black' : 'text-gray-400'}`}
+            className={`flex flex-col items-center transition-all active:scale-90 ${currentTab === TabType.MENU ? 'text-black' : 'text-gray-300'}`}
           >
-            <ShoppingBag size={22} strokeWidth={currentTab === TabType.MENU ? 2.5 : 2} />
-            <span className="text-[10px] font-medium">点单</span>
+            <ShoppingBag size={24} strokeWidth={currentTab === TabType.MENU ? 2.5 : 2} />
+            <span className={`text-[10px] mt-0.5 font-bold ${currentTab === TabType.MENU ? 'block' : 'hidden'}`}>点单</span>
           </button>
           <button 
             onClick={() => setCurrentTab(TabType.ORDERS)}
-            className={`flex flex-col items-center gap-0.5 transition-colors ${currentTab === TabType.ORDERS ? 'text-black' : 'text-gray-400'}`}
+            className={`flex flex-col items-center transition-all active:scale-90 ${currentTab === TabType.ORDERS ? 'text-black' : 'text-gray-300'}`}
           >
-            <FileText size={22} strokeWidth={currentTab === TabType.ORDERS ? 2.5 : 2} />
-            <span className="text-[10px] font-medium">订单</span>
+            <FileText size={24} strokeWidth={currentTab === TabType.ORDERS ? 2.5 : 2} />
+            <span className={`text-[10px] mt-0.5 font-bold ${currentTab === TabType.ORDERS ? 'block' : 'hidden'}`}>订单</span>
           </button>
           <button 
             onClick={() => setCurrentTab(TabType.PROFILE)}
-            className={`flex flex-col items-center gap-0.5 transition-colors ${currentTab === TabType.PROFILE ? 'text-black' : 'text-gray-400'}`}
+            className={`flex flex-col items-center transition-all active:scale-90 ${currentTab === TabType.PROFILE ? 'text-black' : 'text-gray-300'}`}
           >
-            <User size={22} strokeWidth={currentTab === TabType.PROFILE ? 2.5 : 2} />
-            <span className="text-[10px] font-medium">我的</span>
+            <User size={24} strokeWidth={currentTab === TabType.PROFILE ? 2.5 : 2} />
+            <span className={`text-[10px] mt-0.5 font-bold ${currentTab === TabType.PROFILE ? 'block' : 'hidden'}`}>我的</span>
           </button>
         </nav>
       )}
