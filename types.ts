@@ -38,4 +38,6 @@ export interface Product {
   image: string;
   description?: string;
   category: string;
+  // Added missing specs property for product variants/customization
+  specs?: string[];
 }
