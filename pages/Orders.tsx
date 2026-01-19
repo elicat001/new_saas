@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
-import { ChevronRight, Clock, Search, History, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
-// Added MerchantConfig import
+import { ChevronRight, Clock, Search, History, CheckCircle2, XCircle, AlertCircle, ShoppingBag } from 'lucide-react';
 import { MerchantConfig } from '../types';
 
 const ORDERS_MOCK = [
@@ -39,37 +38,44 @@ const ORDERS_MOCK = [
 
 interface OrdersProps {
   onSelectOrder: (id: string) => void;
-  // Added merchant prop
   merchant: MerchantConfig;
 }
 
-// Updated component signature to accept merchant prop
 const Orders: React.FC<OrdersProps> = ({ onSelectOrder, merchant }) => {
   const [activeTab, setActiveTab] = useState('点单');
   const [activeFilter, setActiveFilter] = useState('全部');
 
-  const getStatusUI = (status: string) => {
+  const getStatusConfig = (status: string) => {
     switch (status) {
       case '已支付':
         return {
-          icon: <CheckCircle2 size={14} className="text-emerald-500" />,
-          bgColor: 'bg-emerald-50',
+          icon: <CheckCircle2 size={12} strokeWidth={3} />,
+          bgColor: 'bg-emerald-500/10',
           textColor: 'text-emerald-600',
-          label: '已支付'
+          borderColor: 'border-emerald-500',
+          barColor: 'bg-emerald-500',
+          label: '已支付',
+          isCancelled: false
         };
       case '已取消':
         return {
-          icon: <XCircle size={14} className="text-gray-400" />,
-          bgColor: 'bg-gray-100',
-          textColor: 'text-gray-400',
-          label: '已取消'
+          icon: <XCircle size={12} strokeWidth={3} />,
+          bgColor: 'bg-slate-100',
+          textColor: 'text-slate-400',
+          borderColor: 'border-slate-200',
+          barColor: 'bg-slate-300',
+          label: '已取消',
+          isCancelled: true
         };
       default:
         return {
-          icon: <AlertCircle size={14} className="text-orange-400" />,
-          bgColor: 'bg-orange-50',
-          textColor: 'text-orange-500',
-          label: status
+          icon: <AlertCircle size={12} strokeWidth={3} />,
+          bgColor: 'bg-amber-500/10',
+          textColor: 'text-amber-600',
+          borderColor: 'border-amber-400',
+          barColor: 'bg-amber-400',
+          label: status,
+          isCancelled: false
         };
     }
   };
@@ -91,11 +97,11 @@ const Orders: React.FC<OrdersProps> = ({ onSelectOrder, merchant }) => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-4 px-2 text-[15px] font-black relative transition-all ${activeTab === tab ? 'text-black scale-110' : 'text-gray-300'}`}
+              className={`pb-4 px-2 text-[15px] font-black relative transition-all ${activeTab === tab ? 'text-black scale-105' : 'text-gray-300'}`}
             >
               {tab}
               {activeTab === tab && (
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-1.5 bg-[#f7e28b] rounded-full shadow-sm"></div>
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-black rounded-full"></div>
               )}
             </button>
           ))}
@@ -110,7 +116,7 @@ const Orders: React.FC<OrdersProps> = ({ onSelectOrder, merchant }) => {
             onClick={() => setActiveFilter(filter)}
             className={`px-6 py-2.5 rounded-full text-xs font-black transition-all whitespace-nowrap active:scale-95 ${
               activeFilter === filter 
-              ? 'bg-black text-[#f7e28b] shadow-lg' 
+              ? 'bg-black text-white shadow-lg' 
               : 'bg-white text-gray-400 border border-gray-100'
             }`}
           >
@@ -120,74 +126,93 @@ const Orders: React.FC<OrdersProps> = ({ onSelectOrder, merchant }) => {
       </div>
 
       {/* Enhanced Orders List */}
-      <div className="flex-1 px-5 mt-6 space-y-5">
+      <div className="flex-1 px-5 mt-6 space-y-6">
         {ORDERS_MOCK.map(order => {
-          const statusUI = getStatusUI(order.status);
+          const config = getStatusConfig(order.status);
           return (
             <div 
               key={order.id} 
               onClick={() => onSelectOrder(order.id)}
-              className="bg-white rounded-[32px] p-6 shadow-sm active:scale-[0.98] transition-all border border-gray-50/50"
+              className={`relative bg-white rounded-[32px] overflow-hidden shadow-soft active:scale-[0.98] transition-all border border-gray-50/50 flex ${config.isCancelled ? 'opacity-70' : ''}`}
             >
-              <div className="flex justify-between items-start mb-6">
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2">
-                     <span className="text-sm font-black text-gray-800">{order.shop}</span>
-                     <ChevronRight size={14} className="text-gray-300" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="text-[9px] font-black bg-[#f7e28b]/20 text-[#d4b945] px-2 py-0.5 rounded-md border border-[#f7e28b]/30 uppercase tracking-wider">
-                      {order.type}
+              {/* Status Accent Bar */}
+              <div className={`w-1.5 shrink-0 ${config.barColor}`}></div>
+              
+              <div className="flex-1 p-6">
+                <div className="flex justify-between items-start mb-5">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2">
+                       <span className={`text-[15px] font-black ${config.isCancelled ? 'text-gray-400' : 'text-gray-900'}`}>{order.shop}</span>
+                       <ChevronRight size={14} className="text-gray-300" />
                     </div>
-                    <div className="text-[10px] text-gray-300 font-bold flex items-center gap-1">
-                      <Clock size={10} />
-                      {order.date}
+                    <div className="flex items-center gap-2">
+                      <div className="text-[9px] font-black bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                        {order.type}
+                      </div>
+                      <div className="text-[10px] text-gray-300 font-bold flex items-center gap-1">
+                        <Clock size={10} />
+                        {order.date}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Enhanced Status Badge */}
+                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${config.bgColor} ${config.textColor} text-[10px] font-black shadow-sm border border-white/20`}>
+                    {config.icon}
+                    {config.label}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-5 items-center">
+                     <div className="relative group">
+                        <img 
+                          src={order.image} 
+                          alt="product" 
+                          className={`w-14 h-14 rounded-[20px] object-cover bg-gray-50 border border-gray-100 shadow-sm transition-all ${config.isCancelled ? 'grayscale brightness-110 opacity-40' : ''}`} 
+                        />
+                        {order.count > 1 && (
+                          <span className={`absolute -top-1.5 -right-1.5 text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm ${config.isCancelled ? 'bg-gray-200 text-gray-400' : 'bg-black text-white'}`}>
+                            {order.count}
+                          </span>
+                        )}
+                     </div>
+                     <div className="flex flex-col">
+                        <span className="text-[9px] text-gray-300 font-black tracking-widest uppercase mb-0.5">Queue ID</span>
+                        <span className={`text-2xl font-black leading-none ${config.isCancelled ? 'text-gray-300' : 'text-gray-900'}`}>#{order.id}</span>
+                     </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[10px] text-gray-300 font-bold mb-0.5">实付金额</div>
+                    <div className={`text-xl font-black leading-none ${config.isCancelled ? 'text-gray-300 line-through' : 'text-emerald-600'}`}>
+                      ¥{order.price.toFixed(2)}
                     </div>
                   </div>
                 </div>
+
+                {/* Quick Actions for completed orders */}
+                {!config.isCancelled && (
+                  <div className="mt-5 pt-5 border-t border-gray-50 flex gap-3">
+                     <button className="flex-1 py-2.5 rounded-xl border border-gray-100 text-[10px] font-black text-gray-400 active:bg-gray-50 transition-colors uppercase tracking-wider">查看发票</button>
+                     <button className="flex-1 py-2.5 rounded-xl bg-black text-white text-[10px] font-black active:opacity-90 transition-opacity uppercase tracking-wider">再来一单</button>
+                  </div>
+                )}
                 
-                {/* Enhanced Status Badge */}
-                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${statusUI.bgColor} ${statusUI.textColor} text-[11px] font-black transition-colors`}>
-                  {statusUI.icon}
-                  {statusUI.label}
-                </div>
+                {config.isCancelled && (
+                  <div className="mt-5 pt-5 border-t border-dashed border-gray-100 flex justify-end">
+                    <button className="px-5 py-2 rounded-xl bg-gray-50 text-[10px] font-black text-gray-400 active:bg-gray-100 transition-colors uppercase tracking-wider">重新下单</button>
+                  </div>
+                )}
               </div>
-
-              <div className="flex items-end justify-between pt-2">
-                <div className="flex gap-5 items-center">
-                   <div className="relative group">
-                      <img src={order.image} alt="product" className={`w-16 h-16 rounded-[20px] object-cover bg-gray-50 border border-gray-50 shadow-md group-active:scale-95 transition-transform ${order.status === '已取消' ? 'grayscale opacity-50' : ''}`} />
-                      {order.count > 1 && (
-                        <span className="absolute -top-2 -right-2 bg-black text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">{order.count}</span>
-                      )}
-                   </div>
-                   <div className="flex flex-col">
-                      <span className="text-[10px] text-gray-300 font-black tracking-widest uppercase mb-1">Queue ID</span>
-                      <span className="text-3xl font-black text-black leading-none">{order.id}</span>
-                   </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-xs text-gray-300 font-bold mb-1">实付金额</div>
-                  <div className={`text-2xl font-black leading-none ${order.status === '已取消' ? 'text-gray-300 line-through' : 'text-black'}`}>¥{order.price.toFixed(2)}</div>
-                </div>
-              </div>
-
-              {/* Quick Actions for completed orders */}
-              {order.status !== '已取消' && (
-                <div className="mt-6 pt-5 border-t border-gray-50 flex gap-3">
-                   <button className="flex-1 py-3 rounded-2xl border border-gray-100 text-[11px] font-black text-gray-400 active:bg-gray-50 transition-colors">查看发票</button>
-                   <button className="flex-1 py-3 rounded-2xl bg-black text-[#f7e28b] text-[11px] font-black active:opacity-90 transition-opacity">再来一单</button>
-                </div>
-              )}
             </div>
           );
         })}
 
-        <div className="py-16 flex flex-col items-center justify-center gap-4 opacity-30">
-           <History size={32} strokeWidth={1} className="text-gray-400" />
+        <div className="py-20 flex flex-col items-center justify-center gap-4 opacity-20">
+           <ShoppingBag size={40} strokeWidth={1} className="text-gray-400" />
            <div className="flex flex-col items-center">
-              <span className="text-xs font-black text-gray-400 tracking-widest uppercase">End of history</span>
-              <div className="w-8 h-1 bg-gray-200 rounded-full mt-2"></div>
+              <span className="text-[10px] font-black text-gray-400 tracking-[0.3em] uppercase">No more orders</span>
+              <div className="w-12 h-0.5 bg-gray-200 rounded-full mt-3"></div>
            </div>
         </div>
       </div>

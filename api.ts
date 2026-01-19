@@ -1,6 +1,6 @@
 
 import { MerchantConfig, Product } from './types';
-import { MERCHANTS as MOCK_MERCHANTS } from './config';
+import { MERCHANTS as MOCK_MERCHANTS, PRODUCTS_MOCK } from './config';
 
 const API_BASE = '/api';
 
@@ -23,8 +23,9 @@ export const api = {
       if (!res.ok) throw new Error('Failed to fetch menu');
       return await res.json();
     } catch (err) {
-      console.warn(`Could not load menu for ${merchantId} from server, returning empty.`, err);
-      return [];
+      console.warn(`Could not load menu for ${merchantId} from server, returning mock data.`, err);
+      // Resilience: Return local mock data for the specific merchant if the API fails
+      return PRODUCTS_MOCK[merchantId] || [];
     }
   },
 

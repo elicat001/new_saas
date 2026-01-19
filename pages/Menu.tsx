@@ -26,6 +26,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
   const [selectedSpec, setSelectedSpec] = useState<string | undefined>(undefined);
   const [quantity, setQuantity] = useState(1);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -56,18 +57,25 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
 
   const addToCart = () => {
     if (selectedProduct) {
-      setCart(prev => {
-        const existingIndex = prev.findIndex(item => 
-          item.product.id === selectedProduct.id && item.selectedSpec === selectedSpec
-        );
-        if (existingIndex !== -1) {
-          const newCart = [...prev];
-          newCart[existingIndex].quantity += quantity;
-          return newCart;
-        }
-        return [...prev, { product: selectedProduct, quantity, selectedSpec }];
-      });
-      setSelectedProduct(null);
+      setIsAdding(true);
+      
+      // SaaS: Simulate network latency for a better UX feedback loop
+      setTimeout(() => {
+        setCart(prev => {
+          const existingIndex = prev.findIndex(item => 
+            item.product.id === selectedProduct.id && item.selectedSpec === selectedSpec
+          );
+          if (existingIndex !== -1) {
+            const newCart = [...prev];
+            newCart[existingIndex].quantity += quantity;
+            return newCart;
+          }
+          return [...prev, { product: selectedProduct, quantity, selectedSpec }];
+        });
+        
+        setIsAdding(false);
+        setSelectedProduct(null);
+      }, 600);
     }
   };
 
@@ -166,7 +174,9 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/80 z-[110] flex items-center justify-center p-6 backdrop-blur-md">
           <div className="bg-white w-full max-sm rounded-main overflow-hidden relative animate-in zoom-in-95 duration-300">
-            <button onClick={() => setSelectedProduct(null)} className="absolute top-6 right-6 bg-white/20 p-2.5 rounded-full text-white z-10"><X size={20} /></button>
+            <button onClick={() => !isAdding && setSelectedProduct(null)} className={`absolute top-6 right-6 p-2.5 rounded-full z-10 transition-all ${isAdding ? 'opacity-20 cursor-not-allowed' : 'bg-white/20 text-white'}`}>
+              <X size={20} />
+            </button>
             <div className="h-64 relative">
                 <img src={selectedProduct.image} className="w-full h-full object-cover" />
             </div>
@@ -176,19 +186,32 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
               {selectedProduct.specs && (
                 <div className="mb-10 flex flex-wrap gap-3">
                   {selectedProduct.specs.map(spec => (
-                    <button key={spec} onClick={() => setSelectedSpec(spec)} className={`px-6 py-2.5 rounded-inner text-[11px] font-black border-2 ${selectedSpec === spec ? 'bg-brand border-brand' : 'bg-gray-50 border-transparent text-gray-400'}`}>{spec}</button>
+                    <button key={spec} disabled={isAdding} onClick={() => setSelectedSpec(spec)} className={`px-6 py-2.5 rounded-inner text-[11px] font-black border-2 transition-all ${selectedSpec === spec ? 'bg-brand border-brand' : 'bg-gray-50 border-transparent text-gray-400'} ${isAdding ? 'opacity-50' : ''}`}>{spec}</button>
                   ))}
                 </div>
               )}
               <div className="flex items-center justify-between mb-10 pt-8 border-t border-gray-50">
                  <div className="text-3xl font-black text-black">¥{selectedProduct.price}</div>
                  <div className="flex items-center gap-6">
-                    <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-10 h-10 border-2 border-gray-100 rounded-full flex items-center justify-center"><Minus /></button>
+                    <button disabled={isAdding} onClick={() => setQuantity(q => Math.max(1, q - 1))} className={`w-10 h-10 border-2 border-gray-100 rounded-full flex items-center justify-center transition-all ${isAdding ? 'opacity-20' : 'active-scale'}`}><Minus /></button>
                     <span className="font-black text-xl">{quantity}</span>
-                    <button onClick={() => setQuantity(q => q + 1)} className="w-10 h-10 bg-brand rounded-full flex items-center justify-center"><Plus /></button>
+                    <button disabled={isAdding} onClick={() => setQuantity(q => q + 1)} className={`w-10 h-10 bg-brand rounded-full flex items-center justify-center transition-all ${isAdding ? 'opacity-20' : 'active-scale'}`}><Plus /></button>
                  </div>
               </div>
-              <button onClick={addToCart} className="w-full bg-brand py-5 rounded-inner font-black text-lg uppercase tracking-widest shadow-xl shadow-brand-yellow/30">加入购物车</button>
+              <button 
+                onClick={addToCart} 
+                disabled={isAdding}
+                className="w-full bg-brand py-5 rounded-inner font-black text-lg uppercase tracking-widest shadow-xl shadow-brand-yellow/30 active-scale flex items-center justify-center gap-3 disabled:opacity-80 transition-all"
+              >
+                {isAdding ? (
+                  <>
+                    <Loader2 size={24} className="animate-spin" />
+                    <span>Processing</span>
+                  </>
+                ) : (
+                  '加入购物车'
+                )}
+              </button>
             </div>
           </div>
         </div>
