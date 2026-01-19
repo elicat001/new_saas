@@ -8,9 +8,10 @@ interface ProfileProps {
   onAddresses: () => void;
   onTopUp: () => void;
   onCoupons: () => void;
+  onIntegralDetails: () => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ onOrders, onUserInfo, onAddresses, onTopUp, onCoupons }) => {
+const Profile: React.FC<ProfileProps> = ({ onOrders, onUserInfo, onAddresses, onTopUp, onCoupons, onIntegralDetails }) => {
   return (
     <div className="bg-[#F8F8F8] min-h-full pb-32">
       {/* Header with Brand Gradient */}
@@ -46,7 +47,7 @@ const Profile: React.FC<ProfileProps> = ({ onOrders, onUserInfo, onAddresses, on
             </div>
 
             <div className="flex justify-around items-center py-2 border-t border-gray-50 pt-8">
-                <div className="text-center cursor-pointer group active:scale-95 transition-all">
+                <div className="text-center cursor-pointer group active:scale-95 transition-all" onClick={onIntegralDetails}>
                     <div className="text-[11px] text-gray-400 font-black mb-3 group-hover:text-black transition-colors">积分</div>
                     <div className="text-2xl font-black text-black">19</div>
                 </div>
@@ -75,6 +76,7 @@ const Profile: React.FC<ProfileProps> = ({ onOrders, onUserInfo, onAddresses, on
 
         <div className="bg-white rounded-[32px] shadow-sm overflow-hidden border border-gray-50/50">
             <MenuItem icon={<Gift size={20} />} title="积分商城" />
+            <MenuItem icon={<CreditCard size={20} />} title="积分明细" onClick={onIntegralDetails} />
         </div>
       </div>
     </div>

@@ -12,11 +12,12 @@ import UserInfo from './pages/UserInfo';
 import Addresses from './pages/Addresses';
 import TopUp from './pages/TopUp';
 import Coupons from './pages/Coupons';
+import IntegralDetails from './pages/IntegralDetails';
 import { Home as HomeIcon, ShoppingBag, FileText, User } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.HOME);
-  const [view, setView] = useState<'main' | 'order-detail' | 'member-code' | 'checkout' | 'user-info' | 'addresses' | 'top-up' | 'coupons'>('main');
+  const [view, setView] = useState<'main' | 'order-detail' | 'member-code' | 'checkout' | 'user-info' | 'addresses' | 'top-up' | 'coupons' | 'integral-details'>('main');
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   const MiniProgramCapsule = () => (
@@ -46,6 +47,7 @@ const App: React.FC = () => {
     if (view === 'addresses') return <Addresses onBack={() => setView('main')} />;
     if (view === 'top-up') return <TopUp onBack={() => setView('main')} />;
     if (view === 'coupons') return <Coupons onBack={() => setView('main')} />;
+    if (view === 'integral-details') return <IntegralDetails onBack={() => setView('main')} />;
 
     switch (currentTab) {
       case TabType.HOME: return <Home onMenu={() => setCurrentTab(TabType.MENU)} onMemberCode={() => setView('member-code')} />;
@@ -57,6 +59,7 @@ const App: React.FC = () => {
           onAddresses={() => setView('addresses')}
           onTopUp={() => setView('top-up')}
           onCoupons={() => setView('coupons')}
+          onIntegralDetails={() => setView('integral-details')}
         />;
       default: return <Home onMenu={() => setCurrentTab(TabType.MENU)} onMemberCode={() => setView('member-code')} />;
     }
