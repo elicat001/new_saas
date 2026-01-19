@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { TabType } from './types';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
@@ -7,11 +7,16 @@ import Orders from './pages/Orders';
 import Profile from './pages/Profile';
 import OrderDetail from './pages/OrderDetail';
 import MemberCode from './pages/MemberCode';
+import Checkout from './pages/Checkout';
+import UserInfo from './pages/UserInfo';
+import Addresses from './pages/Addresses';
+import TopUp from './pages/TopUp';
+import Coupons from './pages/Coupons';
 import { Home as HomeIcon, ShoppingBag, FileText, User } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.HOME);
-  const [view, setView] = useState<'main' | 'order-detail' | 'member-code'>('main');
+  const [view, setView] = useState<'main' | 'order-detail' | 'member-code' | 'checkout' | 'user-info' | 'addresses' | 'top-up' | 'coupons'>('main');
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   // Mock status bar capsule
@@ -34,20 +39,27 @@ const App: React.FC = () => {
     setView('order-detail');
   };
 
-  const navigateToMemberCode = () => {
-    setView('member-code');
-  };
-
   const renderContent = () => {
     if (view === 'order-detail') return <OrderDetail onBack={() => setView('main')} orderId={selectedOrderId} />;
     if (view === 'member-code') return <MemberCode onBack={() => setView('main')} />;
+    if (view === 'checkout') return <Checkout onBack={() => setView('main')} />;
+    if (view === 'user-info') return <UserInfo onBack={() => setView('main')} />;
+    if (view === 'addresses') return <Addresses onBack={() => setView('main')} />;
+    if (view === 'top-up') return <TopUp onBack={() => setView('main')} />;
+    if (view === 'coupons') return <Coupons onBack={() => setView('main')} />;
 
     switch (currentTab) {
-      case TabType.HOME: return <Home onMenu={() => setCurrentTab(TabType.MENU)} onMemberCode={navigateToMemberCode} />;
-      case TabType.MENU: return <Menu />;
+      case TabType.HOME: return <Home onMenu={() => setCurrentTab(TabType.MENU)} onMemberCode={() => setView('member-code')} />;
+      case TabType.MENU: return <Menu onCheckout={() => setView('checkout')} />;
       case TabType.ORDERS: return <Orders onSelectOrder={navigateToOrderDetail} />;
-      case TabType.PROFILE: return <Profile onOrders={() => setCurrentTab(TabType.ORDERS)} />;
-      default: return <Home onMenu={() => setCurrentTab(TabType.MENU)} onMemberCode={navigateToMemberCode} />;
+      case TabType.PROFILE: return <Profile 
+          onOrders={() => setCurrentTab(TabType.ORDERS)} 
+          onUserInfo={() => setView('user-info')}
+          onAddresses={() => setView('addresses')}
+          onTopUp={() => setView('top-up')}
+          onCoupons={() => setView('coupons')}
+        />;
+      default: return <Home onMenu={() => setCurrentTab(TabType.MENU)} onMemberCode={() => setView('member-code')} />;
     }
   };
 
@@ -55,7 +67,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden">
       <MiniProgramCapsule />
       
-      <div className="flex-1 overflow-y-auto pb-24">
+      <div className="flex-1 overflow-y-auto">
         {renderContent()}
       </div>
 

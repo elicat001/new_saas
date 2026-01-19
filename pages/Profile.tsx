@@ -4,9 +4,13 @@ import { ChevronRight, CreditCard, FileText, User, Headphones, MapPin, Gift } fr
 
 interface ProfileProps {
   onOrders: () => void;
+  onUserInfo: () => void;
+  onAddresses: () => void;
+  onTopUp: () => void;
+  onCoupons: () => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ onOrders }) => {
+const Profile: React.FC<ProfileProps> = ({ onOrders, onUserInfo, onAddresses, onTopUp, onCoupons }) => {
   return (
     <div className="bg-gray-50 min-h-full">
       {/* Header with Gradient */}
@@ -19,10 +23,10 @@ const Profile: React.FC<ProfileProps> = ({ onOrders }) => {
         <div className="bg-white rounded-3xl p-6 w-full shadow-lg relative z-10 -mb-24 flex flex-col">
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 rounded-full bg-gray-100 border-4 border-white shadow-sm overflow-hidden">
+                    <div className="w-20 h-20 rounded-full bg-gray-100 border-4 border-white shadow-sm overflow-hidden" onClick={onUserInfo}>
                         <img src="https://picsum.photos/seed/profile-user/200/200" alt="user" className="w-full h-full object-cover" />
                     </div>
-                    <div>
+                    <div onClick={onUserInfo}>
                         <div className="text-2xl font-bold">粒</div>
                         <div className="text-gray-400 text-sm mt-1">188****4331</div>
                     </div>
@@ -38,17 +42,17 @@ const Profile: React.FC<ProfileProps> = ({ onOrders }) => {
             </div>
 
             <div className="flex justify-around items-center py-4 border-t border-gray-50">
-                <div className="text-center">
+                <div className="text-center cursor-pointer">
                     <div className="text-xs text-gray-500 font-bold mb-3">积分</div>
                     <div className="text-xl font-bold">19</div>
                 </div>
                 <div className="w-px h-12 bg-gray-100"></div>
-                <div className="text-center">
+                <div className="text-center cursor-pointer" onClick={onTopUp}>
                     <div className="text-xs text-gray-500 font-bold mb-3">余额</div>
                     <div className="text-xl font-bold">0.00</div>
                 </div>
                 <div className="w-px h-12 bg-gray-100"></div>
-                <div className="text-center">
+                <div className="text-center cursor-pointer" onClick={onCoupons}>
                     <div className="text-xs text-gray-500 font-bold mb-3">优惠券</div>
                     <div className="text-xl font-bold">0</div>
                 </div>
@@ -60,9 +64,9 @@ const Profile: React.FC<ProfileProps> = ({ onOrders }) => {
       <div className="mt-20 px-4 space-y-3 pb-24">
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
             <MenuItem icon={<FileText size={18} />} title="订单中心" onClick={onOrders} />
-            <MenuItem icon={<User size={18} />} title="个人信息" />
+            <MenuItem icon={<User size={18} />} title="个人信息" onClick={onUserInfo} />
             <MenuItem icon={<Headphones size={18} />} title="客服中心" />
-            <MenuItem icon={<MapPin size={18} />} title="我的地址" />
+            <MenuItem icon={<MapPin size={18} />} title="我的地址" onClick={onAddresses} />
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
