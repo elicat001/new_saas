@@ -1,36 +1,36 @@
 
 import React, { useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Clock, Search, History } from 'lucide-react';
 
 const ORDERS_MOCK = [
   {
     id: '8085',
-    shop: '棠小一',
+    shop: '棠小一（总店）',
     status: '已取消',
-    date: '2025-11-19 17:45',
+    date: '2025-11-19 17:45:43',
     price: 2445.00,
     count: 50,
-    image: 'https://picsum.photos/seed/order1/200/200',
+    image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=200&h=200&fit=crop',
     type: '堂食'
   },
   {
     id: '3662',
-    shop: '棠小一',
+    shop: '棠小一（总店）',
     status: '已支付',
-    date: '2025-09-04 19:31',
+    date: '2025-09-04 19:31:12',
     price: 54.40,
     count: 8,
-    image: 'https://picsum.photos/seed/order2/200/200',
-    type: '堂食'
+    image: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=200&h=200&fit=crop',
+    type: '自取'
   },
   {
     id: '6062',
-    shop: '棠小一',
+    shop: '棠小一（分店）',
     status: '已支付',
-    date: '2025-08-21 15:16',
+    date: '2025-08-21 15:16:05',
     price: 19.45,
     count: 1,
-    image: 'https://picsum.photos/seed/order3/200/200',
+    image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&h=200&fit=crop',
     type: '堂食'
   }
 ];
@@ -44,71 +44,115 @@ const Orders: React.FC<OrdersProps> = ({ onSelectOrder }) => {
   const [activeFilter, setActiveFilter] = useState('全部');
 
   return (
-    <div className="flex flex-col h-full bg-gray-50">
-      {/* Page Header */}
-      <div className="bg-white px-4 pt-12 pb-4 shadow-sm z-10">
-        <h1 className="text-center font-bold mb-4">我的订单</h1>
-        <div className="flex justify-around border-b border-gray-100">
+    <div className="flex flex-col min-h-full bg-[#F8F8F8] pb-40">
+      {/* Navigation Header */}
+      <div className="bg-white px-5 pt-16 pb-4 sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center justify-between mb-8">
+           <div className="w-10"></div>
+           <h1 className="font-black text-xl tracking-tight">我的订单</h1>
+           <button className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 active:scale-90 transition-transform">
+             <Search size={20} />
+           </button>
+        </div>
+        
+        <div className="flex justify-around items-center px-4">
           {['点单', '会员', '拼团'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-2 px-4 text-sm relative transition-all ${activeTab === tab ? 'text-black font-bold' : 'text-gray-400'}`}
+              className={`pb-4 px-2 text-[15px] font-black relative transition-all ${activeTab === tab ? 'text-black scale-110' : 'text-gray-300'}`}
             >
               {tab}
-              {activeTab === tab && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#f7e28b]"></div>}
+              {activeTab === tab && (
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-1.5 bg-[#f7e28b] rounded-full shadow-sm"></div>
+              )}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Filter Chips */}
-      <div className="px-4 py-3 flex gap-2 overflow-x-auto scrollbar-hide">
-        {['全部', '堂食', '配送', '快递'].map(filter => (
+      {/* Filter Chips Toolbar */}
+      <div className="px-5 py-5 flex gap-3 overflow-x-auto scrollbar-hide bg-white/50 backdrop-blur-sm border-b border-gray-100">
+        {['全部', '堂食', '自取', '配送', '快递'].map(filter => (
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`px-4 py-1.5 rounded-full text-xs transition-all ${activeFilter === filter ? 'bg-[#f7e28b]/20 text-[#c7b25b] font-bold' : 'text-gray-500'}`}
+            className={`px-6 py-2.5 rounded-full text-xs font-black transition-all whitespace-nowrap active:scale-95 ${
+              activeFilter === filter 
+              ? 'bg-black text-[#f7e28b] shadow-lg' 
+              : 'bg-white text-gray-400 border border-gray-100'
+            }`}
           >
             {filter}
           </button>
         ))}
       </div>
 
-      {/* Orders List */}
-      <div className="flex-1 px-4 space-y-4 pb-8">
+      {/* Enhanced Orders List */}
+      <div className="flex-1 px-5 mt-6 space-y-5">
         {ORDERS_MOCK.map(order => (
           <div 
             key={order.id} 
             onClick={() => onSelectOrder(order.id)}
-            className="bg-white rounded-2xl p-4 shadow-sm"
+            className="bg-white rounded-[32px] p-6 shadow-sm active:scale-[0.98] transition-all border border-gray-50/50"
           >
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] bg-[#f7e28b]/20 text-[#c7b25b] px-1 rounded border border-[#f7e28b]/50">{order.type}</span>
-                <span className="text-sm font-bold text-gray-800">{order.shop}</span>
-                <ChevronRight size={14} className="text-gray-300" />
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-2">
+                   <span className="text-sm font-black text-gray-800">{order.shop}</span>
+                   <ChevronRight size={14} className="text-gray-300" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="text-[9px] font-black bg-[#f7e28b]/20 text-[#d4b945] px-2 py-0.5 rounded-md border border-[#f7e28b]/30 uppercase tracking-wider">
+                    {order.type}
+                  </div>
+                  <div className="text-[10px] text-gray-300 font-bold flex items-center gap-1">
+                    <Clock size={10} />
+                    {order.date}
+                  </div>
+                </div>
               </div>
-              <div className="text-right">
-                <div className={`text-sm font-medium ${order.status === '已取消' ? 'text-gray-400' : 'text-black'}`}>{order.status}</div>
-                <div className="text-[10px] text-gray-400 mt-1">{order.date}</div>
+              <div className={`text-sm font-black tracking-tight ${order.status === '已取消' ? 'text-gray-300' : 'text-[#d4b945]'}`}>
+                {order.status}
               </div>
             </div>
 
-            <div className="flex items-end justify-between">
-              <div className="flex gap-4">
-                 <img src={order.image} alt="product" className="w-14 h-14 rounded-lg object-cover bg-gray-50" />
-                 <div className="flex flex-col justify-center">
-                    <div className="text-xl font-bold text-[#f7e28b]">{order.id}</div>
+            <div className="flex items-end justify-between pt-2">
+              <div className="flex gap-5 items-center">
+                 <div className="relative group">
+                    <img src={order.image} alt="product" className="w-16 h-16 rounded-[20px] object-cover bg-gray-50 border border-gray-50 shadow-md group-active:scale-95 transition-transform" />
+                    {order.count > 1 && (
+                      <span className="absolute -top-2 -right-2 bg-black text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">{order.count}</span>
+                    )}
+                 </div>
+                 <div className="flex flex-col">
+                    <span className="text-[10px] text-gray-300 font-black tracking-widest uppercase mb-1">Queue ID</span>
+                    <span className="text-3xl font-black text-black leading-none">{order.id}</span>
                  </div>
               </div>
               <div className="text-right">
-                <div className="text-lg font-bold">¥ {order.price.toFixed(2)}</div>
-                <div className="text-[10px] text-gray-400">共{order.count}件</div>
+                <div className="text-xs text-gray-300 font-bold mb-1">实付金额</div>
+                <div className="text-2xl font-black text-black leading-none">¥{order.price.toFixed(2)}</div>
               </div>
             </div>
+
+            {/* Quick Actions for completed orders */}
+            {order.status !== '已取消' && (
+              <div className="mt-6 pt-5 border-t border-gray-50 flex gap-3">
+                 <button className="flex-1 py-3 rounded-2xl border border-gray-100 text-[11px] font-black text-gray-400 active:bg-gray-50 transition-colors">查看发票</button>
+                 <button className="flex-1 py-3 rounded-2xl bg-black text-[#f7e28b] text-[11px] font-black active:opacity-90 transition-opacity">再来一单</button>
+              </div>
+            )}
           </div>
         ))}
+
+        <div className="py-16 flex flex-col items-center justify-center gap-4 opacity-30">
+           <History size={32} strokeWidth={1} className="text-gray-400" />
+           <div className="flex flex-col items-center">
+              <span className="text-xs font-black text-gray-400 tracking-widest uppercase">End of history</span>
+              <div className="w-8 h-1 bg-gray-200 rounded-full mt-2"></div>
+           </div>
+        </div>
       </div>
     </div>
   );
