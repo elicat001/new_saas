@@ -1,7 +1,7 @@
 
 import React from 'react';
-// Added User to imports
-import { QrCode, Home as HomeIcon, MapPin, Truck, CalendarCheck, User } from 'lucide-react';
+// Added Scan and ChevronRight to imports
+import { QrCode, Home as HomeIcon, MapPin, Truck, CalendarCheck, User, Scan, ChevronRight } from 'lucide-react';
 
 interface HomeProps {
   onMenu: () => void;
@@ -9,6 +9,12 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode }) => {
+  const handleScan = () => {
+    // In a real app, this would trigger the camera.
+    // For this UI replica, we simulate the navigation to the menu.
+    onMenu();
+  };
+
   return (
     <div className="relative">
       {/* Brand Header Section */}
@@ -28,64 +34,78 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode }) => {
 
       {/* Profile Card Overlay */}
       <div className="px-5 -mt-20">
-        <div className="bg-white rounded-3xl p-6 shadow-sm relative overflow-hidden">
+        <div className="bg-white rounded-[32px] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.05)] relative overflow-hidden">
           {/* Avatar & Info */}
-          <div className="flex justify-between items-start mb-8">
+          <div className="flex justify-between items-start mb-6">
             <div className="flex flex-col">
-              <span className="text-gray-500 text-lg">Hello</span>
-              <span className="text-2xl font-bold">粒</span>
-              <span className="text-gray-400 text-xs mt-1">暂未开通此VIP特权</span>
+              <span className="text-gray-500 text-lg font-medium">Hello</span>
+              <span className="text-2xl font-black">粒</span>
+              <span className="text-gray-400 text-[10px] font-bold mt-1 tracking-wider">暂未开通此VIP特权</span>
             </div>
             <div className="flex flex-col items-end">
-                <div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden mb-2 border-4 border-white shadow-md">
-                    <img src="https://picsum.photos/seed/user-avatar/100/100" alt="Avatar" className="w-full h-full object-cover" />
+                <div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden mb-2 border-[4px] border-white shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop" alt="Avatar" className="w-full h-full object-cover" />
                 </div>
                 <button 
                   onClick={onMemberCode}
-                  className="bg-[#f7e28b] px-3 py-1.5 rounded-full flex items-center gap-1.5"
+                  className="bg-[#f7e28b] px-3 py-1.5 rounded-full flex items-center gap-1.5 active:scale-95 transition-transform shadow-sm"
                 >
-                  <QrCode size={16} className="text-gray-700" />
-                  <span className="text-xs font-bold text-gray-700">会员码</span>
+                  <QrCode size={14} className="text-black" />
+                  <span className="text-[10px] font-black text-black">会员码</span>
                 </button>
             </div>
           </div>
 
+          {/* New Scan to Order Section */}
+          <button 
+            onClick={handleScan}
+            className="w-full bg-[#f7e28b] mb-6 py-4 rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-brand-yellow/30 active:scale-[0.98] transition-all"
+          >
+            <div className="bg-white/40 p-2 rounded-full">
+              <Scan size={24} strokeWidth={2.5} className="text-black" />
+            </div>
+            <div className="text-left">
+              <div className="text-sm font-black text-black">扫码点餐</div>
+              <div className="text-[10px] text-black/60 font-bold uppercase tracking-tight">Scan QR code to order</div>
+            </div>
+          </button>
+
           {/* Service Grid */}
-          <div className="grid grid-cols-2 gap-px bg-gray-100">
-            <button onClick={onMenu} className="bg-white py-8 flex flex-col items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
-              <div className="p-3 bg-white rounded-xl border border-gray-100">
-                <HomeIcon size={32} strokeWidth={1.5} className="text-gray-700" />
+          <div className="grid grid-cols-2 gap-px bg-gray-50 rounded-2xl overflow-hidden border border-gray-50">
+            <button onClick={onMenu} className="bg-white py-6 flex flex-col items-center justify-center gap-2 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+              <div className="p-2.5 bg-gray-50 rounded-xl">
+                <HomeIcon size={26} strokeWidth={1.5} className="text-gray-700" />
               </div>
               <div className="text-center">
-                <div className="font-bold text-gray-800">堂食</div>
-                <div className="text-[10px] text-gray-400 uppercase tracking-tighter">Dine In</div>
+                <div className="font-black text-[13px] text-gray-800">堂食</div>
+                <div className="text-[9px] text-gray-400 uppercase font-bold tracking-tighter">Dine In</div>
               </div>
             </button>
-            <button onClick={onMenu} className="bg-white py-8 flex flex-col items-center justify-center gap-2 border-l border-gray-100 hover:bg-gray-50 transition-colors">
-              <div className="p-3 bg-white rounded-xl border border-gray-100">
-                <User size={32} strokeWidth={1.5} className="text-gray-700" />
+            <button onClick={onMenu} className="bg-white py-6 flex flex-col items-center justify-center gap-2 hover:bg-gray-50 active:bg-gray-100 transition-colors border-l border-gray-50">
+              <div className="p-2.5 bg-gray-50 rounded-xl">
+                <User size={26} strokeWidth={1.5} className="text-gray-700" />
               </div>
               <div className="text-center">
-                <div className="font-bold text-gray-800">自取</div>
-                <div className="text-[10px] text-gray-400 uppercase tracking-tighter">Pick Up</div>
+                <div className="font-black text-[13px] text-gray-800">自取</div>
+                <div className="text-[9px] text-gray-400 uppercase font-bold tracking-tighter">Pick Up</div>
               </div>
             </button>
-            <button onClick={onMenu} className="bg-white py-8 flex flex-col items-center justify-center gap-2 border-t border-gray-100 hover:bg-gray-50 transition-colors">
-              <div className="p-3 bg-white rounded-xl border border-gray-100">
-                <Truck size={32} strokeWidth={1.5} className="text-gray-700" />
+            <button onClick={onMenu} className="bg-white py-6 flex flex-col items-center justify-center gap-2 hover:bg-gray-50 active:bg-gray-100 transition-colors border-t border-gray-50">
+              <div className="p-2.5 bg-gray-50 rounded-xl">
+                <Truck size={26} strokeWidth={1.5} className="text-gray-700" />
               </div>
               <div className="text-center">
-                <div className="font-bold text-gray-800">外送</div>
-                <div className="text-[10px] text-gray-400 uppercase tracking-tighter">Delivery</div>
+                <div className="font-black text-[13px] text-gray-800">外送</div>
+                <div className="text-[9px] text-gray-400 uppercase font-bold tracking-tighter">Delivery</div>
               </div>
             </button>
-            <button onClick={onMenu} className="bg-white py-8 flex flex-col items-center justify-center gap-2 border-t border-l border-gray-100 hover:bg-gray-50 transition-colors">
-              <div className="p-3 bg-white rounded-xl border border-gray-100">
-                <CalendarCheck size={32} strokeWidth={1.5} className="text-gray-700" />
+            <button onClick={onMenu} className="bg-white py-6 flex flex-col items-center justify-center gap-2 hover:bg-gray-50 active:bg-gray-100 transition-colors border-t border-l border-gray-50">
+              <div className="p-2.5 bg-gray-50 rounded-xl">
+                <CalendarCheck size={26} strokeWidth={1.5} className="text-gray-700" />
               </div>
               <div className="text-center">
-                <div className="font-bold text-gray-800">自助预约</div>
-                <div className="text-[10px] text-gray-400 uppercase tracking-tighter">Reservation</div>
+                <div className="font-black text-[13px] text-gray-800">自助预约</div>
+                <div className="text-[9px] text-gray-400 uppercase font-bold tracking-tighter">Reservation</div>
               </div>
             </button>
           </div>
@@ -93,17 +113,21 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode }) => {
       </div>
 
       {/* Floating Status / Promotion */}
-      <div className="mt-8 px-5">
-          <div className="bg-[#e5e5e5] rounded-full py-4 text-center text-gray-500 font-bold mb-4 shadow-inner">
+      <div className="mt-8 px-5 pb-32">
+          <div className="bg-[#e5e5e5] rounded-[24px] py-4 text-center text-gray-400 text-xs font-black mb-4 shadow-inner">
             未满足开通条件
           </div>
           
-          <div className="bg-[#f7e28b] rounded-t-3xl p-5 flex items-center justify-between shadow-sm">
+          <div className="bg-white border border-gray-50 rounded-[24px] p-5 flex items-center justify-between shadow-sm">
              <div className="flex items-center gap-2">
-                <MapPin size={18} />
-                <span className="font-bold text-sm">棠小一（XX店）</span>
+                <div className="bg-[#f7e28b]/20 p-2 rounded-full">
+                  <MapPin size={16} className="text-[#d4b945]" />
+                </div>
+                <span className="font-black text-sm text-gray-800">棠小一（XX店）</span>
              </div>
-             <div className="text-xs text-gray-600">距离您86.2km &gt;</div>
+             <div className="text-[11px] font-bold text-gray-400 flex items-center gap-1">
+               距离您86.2km <ChevronRight size={14} />
+             </div>
           </div>
       </div>
     </div>
