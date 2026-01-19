@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
-import { TabType } from './types';
+import React, { useState, useEffect } from 'react';
+import { TabType, MerchantConfig } from './types';
+import { MERCHANTS } from './config';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Orders from './pages/Orders';
@@ -16,9 +17,19 @@ import IntegralDetails from './pages/IntegralDetails';
 import { Home as HomeIcon, ShoppingBag, FileText, User } from 'lucide-react';
 
 const App: React.FC = () => {
+  const [currentMerchant, setCurrentMerchant] = useState<MerchantConfig>(MERCHANTS[0]);
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.HOME);
   const [view, setView] = useState<'main' | 'order-detail' | 'member-code' | 'checkout' | 'user-info' | 'addresses' | 'top-up' | 'coupons' | 'integral-details'>('main');
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+
+  // SaaS: Dynamic Theme Injection
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--brand-primary', currentMerchant.theme.primary);
+    root.style.setProperty('--brand-secondary', currentMerchant.theme.secondary);
+    root.style.setProperty('--radius-main', currentMerchant.theme.borderRadius);
+    root.style.setProperty('--radius-inner', currentMerchant.theme.borderRadius === '0px' ? '0px' : '24px');
+  }, [currentMerchant]);
 
   const MiniProgramCapsule = () => (
     <div className="fixed top-6 right-4 z-[100] flex items-center gap-3 px-3 py-1.5 rounded-full wechat-capsule">
@@ -40,19 +51,19 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
-    if (view === 'order-detail') return <OrderDetail onBack={() => setView('main')} orderId={selectedOrderId} />;
-    if (view === 'member-code') return <MemberCode onBack={() => setView('main')} />;
-    if (view === 'checkout') return <Checkout onBack={() => setView('main')} />;
-    if (view === 'user-info') return <UserInfo onBack={() => setView('main')} />;
-    if (view === 'addresses') return <Addresses onBack={() => setView('main')} />;
-    if (view === 'top-up') return <TopUp onBack={() => setView('main')} />;
-    if (view === 'coupons') return <Coupons onBack={() => setView('main')} />;
-    if (view === 'integral-details') return <IntegralDetails onBack={() => setView('main')} />;
+    if (view === 'order-detail') return <OrderDetail onBack={() => setView('main')} orderId={selectedOrderId} merchant={currentMerchant} />;
+    if (view === 'member-code') return <MemberCode onBack={() => setView('main')} merchant={currentMerchant} />;
+    if (view === 'checkout') return <Checkout onBack={() => setView('main')} merchant={currentMerchant} />;
+    if (view === 'user-info') return <UserInfo onBack={() => setView('main')} merchant={currentMerchant} />;
+    if (view === 'addresses') return <Addresses onBack={() => setView('main')} merchant={currentMerchant} />;
+    if (view === 'top-up') return <TopUp onBack={() => setView('main')} merchant={currentMerchant} />;
+    if (view === 'coupons') return <Coupons onBack={() => setView('main')} merchant={currentMerchant} />;
+    if (view === 'integral-details') return <IntegralDetails onBack={() => setView('main')} merchant={currentMerchant} />;
 
     switch (currentTab) {
-      case TabType.HOME: return <Home onMenu={() => setCurrentTab(TabType.MENU)} onMemberCode={() => setView('member-code')} />;
-      case TabType.MENU: return <Menu onCheckout={() => setView('checkout')} />;
-      case TabType.ORDERS: return <Orders onSelectOrder={navigateToOrderDetail} />;
+      case TabType.HOME: return <Home onMenu={() => setCurrentTab(TabType.MENU)} onMemberCode={() => setView('member-code')} merchant={currentMerchant} />;
+      case TabType.MENU: return <Menu onCheckout={() => setView('checkout')} merchant={currentMerchant} />;
+      case TabType.ORDERS: return <Orders onSelectOrder={navigateToOrderDetail} merchant={currentMerchant} />;
       case TabType.PROFILE: return <Profile 
           onOrders={() => setCurrentTab(TabType.ORDERS)} 
           onUserInfo={() => setView('user-info')}
@@ -60,8 +71,10 @@ const App: React.FC = () => {
           onTopUp={() => setView('top-up')}
           onCoupons={() => setView('coupons')}
           onIntegralDetails={() => setView('integral-details')}
+          merchant={currentMerchant}
+          onSwitchMerchant={(m) => setCurrentMerchant(m)}
         />;
-      default: return <Home onMenu={() => setCurrentTab(TabType.MENU)} onMemberCode={() => setView('member-code')} />;
+      default: return <Home onMenu={() => setCurrentTab(TabType.MENU)} onMemberCode={() => setView('member-code')} merchant={currentMerchant} />;
     }
   };
 
@@ -75,34 +88,21 @@ const App: React.FC = () => {
 
       {view === 'main' && (
         <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[380px] bg-white/95 backdrop-blur-lg shadow-[0_10px_30px_rgba(0,0,0,0.1)] rounded-full px-8 py-3 flex justify-between items-center z-50 border border-gray-100/50">
-          <button 
-            onClick={() => setCurrentTab(TabType.HOME)}
-            className={`flex flex-col items-center transition-all active:scale-90 ${currentTab === TabType.HOME ? 'text-black' : 'text-gray-300'}`}
-          >
-            <HomeIcon size={24} strokeWidth={currentTab === TabType.HOME ? 2.5 : 2} />
-            <span className={`text-[10px] mt-0.5 font-bold ${currentTab === TabType.HOME ? 'block' : 'hidden'}`}>首页</span>
-          </button>
-          <button 
-            onClick={() => setCurrentTab(TabType.MENU)}
-            className={`flex flex-col items-center transition-all active:scale-90 ${currentTab === TabType.MENU ? 'text-black' : 'text-gray-300'}`}
-          >
-            <ShoppingBag size={24} strokeWidth={currentTab === TabType.MENU ? 2.5 : 2} />
-            <span className={`text-[10px] mt-0.5 font-bold ${currentTab === TabType.MENU ? 'block' : 'hidden'}`}>点单</span>
-          </button>
-          <button 
-            onClick={() => setCurrentTab(TabType.ORDERS)}
-            className={`flex flex-col items-center transition-all active:scale-90 ${currentTab === TabType.ORDERS ? 'text-black' : 'text-gray-300'}`}
-          >
-            <FileText size={24} strokeWidth={currentTab === TabType.ORDERS ? 2.5 : 2} />
-            <span className={`text-[10px] mt-0.5 font-bold ${currentTab === TabType.ORDERS ? 'block' : 'hidden'}`}>订单</span>
-          </button>
-          <button 
-            onClick={() => setCurrentTab(TabType.PROFILE)}
-            className={`flex flex-col items-center transition-all active:scale-90 ${currentTab === TabType.PROFILE ? 'text-black' : 'text-gray-300'}`}
-          >
-            <User size={24} strokeWidth={currentTab === TabType.PROFILE ? 2.5 : 2} />
-            <span className={`text-[10px] mt-0.5 font-bold ${currentTab === TabType.PROFILE ? 'block' : 'hidden'}`}>我的</span>
-          </button>
+          {[
+            { tab: TabType.HOME, icon: HomeIcon, label: '首页' },
+            { tab: TabType.MENU, icon: ShoppingBag, label: '点单' },
+            { tab: TabType.ORDERS, icon: FileText, label: '订单' },
+            { tab: TabType.PROFILE, icon: User, label: '我的' }
+          ].map(({ tab, icon: Icon, label }) => (
+            <button 
+              key={tab}
+              onClick={() => setCurrentTab(tab)}
+              className={`flex flex-col items-center transition-all active:scale-90 ${currentTab === tab ? 'text-black' : 'text-gray-300'}`}
+            >
+              <Icon size={24} strokeWidth={currentTab === tab ? 2.5 : 2} style={{ color: currentTab === tab ? 'var(--brand-secondary)' : undefined }} />
+              <span className={`text-[10px] mt-0.5 font-bold ${currentTab === tab ? 'block' : 'hidden'}`}>{label}</span>
+            </button>
+          ))}
         </nav>
       )}
     </div>

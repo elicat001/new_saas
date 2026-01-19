@@ -6,6 +6,30 @@ export enum TabType {
   PROFILE = 'PROFILE'
 }
 
+export interface ThemeConfig {
+  primary: string;
+  secondary: string;
+  borderRadius: string;
+  fontFamily?: string;
+}
+
+export interface MerchantConfig {
+  id: string;
+  name: string;
+  slogan: string;
+  logo: string;
+  mascot: string;
+  theme: ThemeConfig;
+  features: {
+    dineIn: boolean;
+    pickup: boolean;
+    delivery: boolean;
+    express: boolean;
+    topup: boolean;
+    coupons: boolean;
+  };
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -14,14 +38,4 @@ export interface Product {
   image: string;
   description?: string;
   category: string;
-}
-
-export interface Order {
-  id: string;
-  orderNumber: string;
-  status: 'PAID' | 'CANCELLED' | 'PENDING';
-  items: { product: Product; quantity: number }[];
-  totalPrice: number;
-  date: string;
-  type: 'DINE_IN' | 'PICK_UP' | 'DELIVERY';
 }

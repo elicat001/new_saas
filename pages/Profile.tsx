@@ -1,6 +1,8 @@
 
 import React from 'react';
-import { ChevronRight, CreditCard, FileText, User, Headphones, MapPin, Gift, Settings } from 'lucide-react';
+import { ChevronRight, CreditCard, FileText, User, Headphones, MapPin, Gift, Settings, Layers } from 'lucide-react';
+import { MerchantConfig } from '../types';
+import { MERCHANTS } from '../config';
 
 interface ProfileProps {
   onOrders: () => void;
@@ -9,22 +11,25 @@ interface ProfileProps {
   onTopUp: () => void;
   onCoupons: () => void;
   onIntegralDetails: () => void;
+  merchant: MerchantConfig;
+  onSwitchMerchant: (m: MerchantConfig) => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ onOrders, onUserInfo, onAddresses, onTopUp, onCoupons, onIntegralDetails }) => {
+const Profile: React.FC<ProfileProps> = ({ 
+  onOrders, onUserInfo, onAddresses, onTopUp, onCoupons, onIntegralDetails, merchant, onSwitchMerchant 
+}) => {
   return (
-    <div className="bg-[#F8F8F8] min-h-full pb-40">
-      {/* Dynamic Header */}
-      <div className="bg-[#f7e28b] pt-24 pb-24 px-6 flex flex-col items-center relative overflow-hidden">
+    <div className="bg-[#F8F8F8] min-h-full pb-40 transition-all duration-500">
+      <div className="bg-brand pt-24 pb-24 px-6 flex flex-col items-center relative overflow-hidden transition-all duration-500">
         <div className="absolute top-14 left-7 z-10">
-           <h1 className="text-3xl font-black tracking-widest text-black">棠小一<sup className="text-[12px] font-black align-top ml-1">®</sup></h1>
+           <h1 className="text-3xl font-black tracking-widest text-black">
+             {merchant.name}
+             <sup className="text-[12px] font-black align-top ml-1">®</sup>
+           </h1>
         </div>
         
         <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
-        <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
-        
-        {/* User Profile Card */}
-        <div className="bg-white rounded-[48px] p-10 w-full shadow-soft relative z-20 -mb-32">
+        <div className="bg-white p-10 w-full shadow-soft relative z-20 -mb-32 rounded-main">
             <div className="flex items-center justify-between mb-12">
                 <div className="flex items-center gap-6">
                     <div 
@@ -35,10 +40,10 @@ const Profile: React.FC<ProfileProps> = ({ onOrders, onUserInfo, onAddresses, on
                     </div>
                     <div onClick={onUserInfo} className="active-scale">
                         <div className="text-2xl font-black text-black tracking-tight leading-none mb-1.5">粒</div>
-                        <div className="text-gray-300 text-[11px] font-black tracking-widest uppercase">Member ID: 8812</div>
+                        <div className="text-gray-300 text-[11px] font-black tracking-widest uppercase">Platinum Member</div>
                     </div>
                 </div>
-                <button className="p-3 bg-gray-50 rounded-2xl active-scale text-gray-400">
+                <button className="p-3 bg-gray-50 rounded-inner active-scale text-gray-400">
                     <Settings size={20} />
                 </button>
             </div>
@@ -51,22 +56,34 @@ const Profile: React.FC<ProfileProps> = ({ onOrders, onUserInfo, onAddresses, on
         </div>
       </div>
 
-      {/* Menu Sections */}
       <div className="mt-36 px-5 space-y-6">
-        <div className="bg-white rounded-[40px] shadow-sm overflow-hidden border border-gray-50/50">
+        <div className="bg-white shadow-sm overflow-hidden border border-gray-50/50 rounded-main">
             <MenuItem icon={<FileText size={20} strokeWidth={2.5} />} title="订单中心" onClick={onOrders} />
             <MenuItem icon={<User size={20} strokeWidth={2.5} />} title="个人信息" onClick={onUserInfo} />
-            <MenuItem icon={<Headphones size={20} strokeWidth={2.5} />} title="客服中心" />
             <MenuItem icon={<MapPin size={20} strokeWidth={2.5} />} title="我的地址" onClick={onAddresses} />
         </div>
 
-        <div className="bg-white rounded-[40px] shadow-sm overflow-hidden border border-gray-50/50">
-            <MenuItem icon={<Gift size={20} strokeWidth={2.5} />} title="积分商城" />
-            <MenuItem icon={<CreditCard size={20} strokeWidth={2.5} />} title="积分明细" onClick={onIntegralDetails} />
+        {/* SaaS Switching Tool */}
+        <div className="bg-white p-8 border border-brand/20 shadow-soft rounded-main">
+            <div className="flex items-center gap-3 mb-6 text-brand">
+                <Layers size={20} />
+                <h3 className="text-sm font-black uppercase tracking-widest">SaaS 装修引擎演示</h3>
+            </div>
+            <div className="flex flex-wrap gap-3">
+                {MERCHANTS.map(m => (
+                    <button
+                        key={m.id}
+                        onClick={() => onSwitchMerchant(m)}
+                        className={`px-4 py-2.5 rounded-inner text-[10px] font-black transition-all border-2 ${merchant.id === m.id ? 'bg-brand text-black border-brand' : 'bg-white text-gray-400 border-gray-100'}`}
+                    >
+                        {m.name}
+                    </button>
+                ))}
+            </div>
         </div>
         
         <div className="py-10 text-center text-gray-300 text-[10px] font-black uppercase tracking-[0.3em]">
-           Power by Tang Xiao Yi
+           SaaS Engine · Powered by {merchant.slogan}
         </div>
       </div>
     </div>
@@ -86,7 +103,7 @@ const MenuItem = ({ icon, title, onClick }: any) => (
     className="w-full px-8 py-6 flex items-center justify-between group active:bg-gray-50 transition-colors border-b last:border-b-0 border-gray-50"
   >
     <div className="flex items-center gap-6">
-      <div className="text-gray-300 group-hover:text-black transition-colors">{icon}</div>
+      <div className="text-gray-300 group-hover:text-brand transition-colors">{icon}</div>
       <span className="font-black text-sm tracking-tight text-gray-800">{title}</span>
     </div>
     <ChevronRight size={18} className="text-gray-200 group-hover:text-gray-400 transition-colors" />

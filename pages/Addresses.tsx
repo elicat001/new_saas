@@ -1,12 +1,17 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, MapPin, Plus, Trash2, Edit2, Navigation } from 'lucide-react';
+// Added MerchantConfig import
+import { MerchantConfig } from '../types';
 
 interface AddressesProps {
   onBack: () => void;
+  // Added merchant prop
+  merchant: MerchantConfig;
 }
 
-const Addresses: React.FC<AddressesProps> = ({ onBack }) => {
+// Updated component signature to accept merchant prop
+const Addresses: React.FC<AddressesProps> = ({ onBack, merchant }) => {
   const [activeTab, setActiveTab] = useState<'LOCAL' | 'EXPRESS'>('LOCAL');
   const [addresses, setAddresses] = useState([
     { id: 1, name: '粒', phone: '188****4331', city: '深圳市', detail: '南山区粤海街道软件产业基地4栋B座', tag: '公司', isDefault: true }
@@ -32,7 +37,8 @@ const Addresses: React.FC<AddressesProps> = ({ onBack }) => {
             </button>
             <button 
               onClick={() => setActiveTab('EXPRESS')}
-              className={`flex-1 py-3.5 rounded-[20px] text-xs font-black transition-all ${activeTab === 'EXPRESS' ? 'bg-[#f7e28b] text-black shadow-sm' : 'text-gray-400'}`}
+              className={`flex-1 py-3.5 rounded-[20px] text-xs font-black transition-all ${activeTab === 'EXPRESS' ? 'text-black shadow-sm' : 'text-gray-400'}`}
+              style={activeTab === 'EXPRESS' ? { backgroundColor: merchant.theme.primary } : {}}
             >
               快递地址
             </button>
@@ -46,7 +52,7 @@ const Addresses: React.FC<AddressesProps> = ({ onBack }) => {
             <div key={addr.id} className="bg-white rounded-[32px] p-8 shadow-soft border border-gray-50 group">
                <div className="flex justify-between items-start mb-6">
                   <div className="flex items-center gap-3">
-                     {addr.isDefault && <span className="bg-[#f7e28b] text-black text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider">Default</span>}
+                     {addr.isDefault && <span className="text-black text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider" style={{ backgroundColor: merchant.theme.primary }}>Default</span>}
                      {addr.tag && <span className="bg-gray-100 text-gray-400 text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider">{addr.tag}</span>}
                   </div>
                   <div className="flex gap-4">
@@ -79,7 +85,7 @@ const Addresses: React.FC<AddressesProps> = ({ onBack }) => {
 
       {/* Footer Action */}
       <div className="fixed bottom-0 inset-x-0 p-6 bg-white shadow-up pb-10">
-        <button className="w-full bg-[#f7e28b] py-6 rounded-[28px] font-black text-lg shadow-xl shadow-brand-yellow/30 active-scale flex items-center justify-center gap-3">
+        <button className="w-full py-6 rounded-[28px] font-black text-lg shadow-xl active-scale flex items-center justify-center gap-3" style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}>
             <Plus size={24} strokeWidth={3} />
             新增收货地址
         </button>

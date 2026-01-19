@@ -1,12 +1,17 @@
 
 import React, { useEffect, useState } from 'react';
 import { ChevronLeft, RefreshCw, Info } from 'lucide-react';
+// Added MerchantConfig import
+import { MerchantConfig } from '../types';
 
 interface MemberCodeProps {
   onBack: () => void;
+  // Added merchant prop
+  merchant: MerchantConfig;
 }
 
-const MemberCode: React.FC<MemberCodeProps> = ({ onBack }) => {
+// Updated component signature to accept merchant prop
+const MemberCode: React.FC<MemberCodeProps> = ({ onBack, merchant }) => {
   const [countdown, setCountdown] = useState(60);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -44,7 +49,7 @@ const MemberCode: React.FC<MemberCodeProps> = ({ onBack }) => {
       <div className="flex-1 flex flex-col items-center justify-center px-6 pb-20">
         <div className="bg-white rounded-[48px] w-full shadow-2xl p-10 flex flex-col items-center relative overflow-hidden">
           {/* Top Brand Stripe */}
-          <div className="absolute top-0 inset-x-0 h-2 bg-[#f7e28b]"></div>
+          <div className="absolute top-0 inset-x-0 h-2" style={{ backgroundColor: merchant.theme.primary }}></div>
           
           <div className="mt-4 flex flex-col items-center mb-10">
              <div className="w-20 h-20 rounded-full bg-gray-100 border-[6px] border-white shadow-xl overflow-hidden mb-4">
@@ -81,7 +86,7 @@ const MemberCode: React.FC<MemberCodeProps> = ({ onBack }) => {
              </div>
              <div className="absolute inset-0 flex items-center justify-center">
                 <div className="bg-white p-2 rounded-xl shadow-lg border border-gray-50">
-                   <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-[#f7e28b] font-black text-[10px]">棠</div>
+                   <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center font-black text-[10px]" style={{ color: merchant.theme.primary }}>{merchant.logo}</div>
                 </div>
              </div>
           </div>
@@ -94,7 +99,7 @@ const MemberCode: React.FC<MemberCodeProps> = ({ onBack }) => {
           {/* Bottom Stats Grid */}
           <div className="w-full grid grid-cols-3 gap-4 pt-10 border-t border-dashed border-gray-100">
              <StatMini label="优惠券" value="0" />
-             <StatMini label="积分" value="19" highlight />
+             <StatMini label="积分" value="19" highlight color={merchant.theme.secondary} />
              <StatMini label="余额" value="0.00" />
           </div>
         </div>
@@ -108,9 +113,9 @@ const MemberCode: React.FC<MemberCodeProps> = ({ onBack }) => {
   );
 };
 
-const StatMini = ({ label, value, highlight }: any) => (
+const StatMini = ({ label, value, highlight, color }: any) => (
   <div className="text-center">
-    <div className={`text-xl font-black mb-1.5 ${highlight ? 'text-[#d4b945]' : 'text-black'}`}>{value}</div>
+    <div className={`text-xl font-black mb-1.5 ${highlight ? '' : 'text-black'}`} style={highlight ? { color } : {}}>{value}</div>
     <div className="text-[9px] text-gray-300 font-black uppercase tracking-widest">{label}</div>
   </div>
 );

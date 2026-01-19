@@ -1,12 +1,17 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Check, Wallet, Info } from 'lucide-react';
+// Added MerchantConfig import
+import { MerchantConfig } from '../types';
 
 interface TopUpProps {
   onBack: () => void;
+  // Added merchant prop
+  merchant: MerchantConfig;
 }
 
-const TopUp: React.FC<TopUpProps> = ({ onBack }) => {
+// Updated component signature to accept merchant prop
+const TopUp: React.FC<TopUpProps> = ({ onBack, merchant }) => {
   const [selectedAmount, setSelectedAmount] = useState(10);
   const [agreed, setAgreed] = useState(false);
   
@@ -28,9 +33,9 @@ const TopUp: React.FC<TopUpProps> = ({ onBack }) => {
 
       <div className="p-8">
         <div className="bg-white rounded-[48px] p-10 shadow-soft mb-10 relative overflow-hidden">
-            <div className="absolute -right-10 -top-10 w-40 h-40 bg-[#f7e28b]/10 rounded-full blur-3xl"></div>
+            <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full blur-3xl" style={{ backgroundColor: `${merchant.theme.primary}1A` }}></div>
             <div className="relative z-10 flex items-center gap-5 mb-8">
-                <div className="w-16 h-16 bg-[#f7e28b]/20 rounded-[24px] flex items-center justify-center text-[#d4b945]">
+                <div className="w-16 h-16 rounded-[24px] flex items-center justify-center" style={{ backgroundColor: `${merchant.theme.primary}33`, color: merchant.theme.secondary }}>
                     <Wallet size={32} />
                 </div>
                 <div>
@@ -46,17 +51,18 @@ const TopUp: React.FC<TopUpProps> = ({ onBack }) => {
                     <button
                         key={item.value}
                         onClick={() => setSelectedAmount(item.value)}
-                        className={`relative h-32 rounded-[32px] border-2 transition-all active-scale group ${selectedAmount === item.value ? 'border-[#f7e28b] bg-[#f7e28b]/5' : 'border-gray-50 bg-white'}`}
+                        className={`relative h-32 rounded-[32px] border-2 transition-all active-scale group ${selectedAmount === item.value ? 'bg-[#f7e28b]/5' : 'border-gray-50 bg-white'}`}
+                        style={selectedAmount === item.value ? { borderColor: merchant.theme.primary, backgroundColor: `${merchant.theme.primary}0D` } : {}}
                     >
                         {selectedAmount === item.value && (
-                            <div className="absolute top-4 right-4 bg-[#f7e28b] w-6 h-6 rounded-full flex items-center justify-center shadow-md">
+                            <div className="absolute top-4 right-4 w-6 h-6 rounded-full flex items-center justify-center shadow-md" style={{ backgroundColor: merchant.theme.primary }}>
                                 <Check size={14} strokeWidth={4} />
                             </div>
                         )}
                         <div className="flex flex-col items-center">
                             <div className="text-2xl font-black text-black">¥{item.value}</div>
                             {item.bonus > 0 && (
-                               <div className="mt-2 px-3 py-1 bg-black text-[#f7e28b] text-[8px] font-black rounded-full uppercase tracking-widest">
+                               <div className="mt-2 px-3 py-1 bg-black text-[8px] font-black rounded-full uppercase tracking-widest" style={{ color: merchant.theme.primary }}>
                                  Bonus ¥{item.bonus}
                                </div>
                             )}
@@ -72,17 +78,18 @@ const TopUp: React.FC<TopUpProps> = ({ onBack }) => {
               className="flex items-center gap-4 cursor-pointer group"
             >
                 <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${agreed ? 'bg-black border-black' : 'border-gray-200 group-hover:border-gray-300'}`}>
-                    {agreed && <Check size={14} strokeWidth={4} className="text-[#f7e28b]" />}
+                    {agreed && <Check size={14} strokeWidth={4} style={{ color: merchant.theme.primary }} />}
                 </div>
                 <span className="text-[11px] text-gray-400 font-bold leading-none">
-                  我已阅读并同意 <span className="text-black font-black underline decoration-[#f7e28b] decoration-2">《储值协议》</span>
+                  我已阅读并同意 <span className="text-black font-black underline decoration-2" style={{ textDecorationColor: merchant.theme.primary }}>《储值协议》</span>
                 </span>
             </div>
         </div>
 
         <button 
           disabled={!agreed}
-          className={`w-full py-6 rounded-[28px] font-black text-lg shadow-xl transition-all active-scale mb-10 ${agreed ? 'bg-[#f7e28b] text-black shadow-brand-yellow/30' : 'bg-gray-100 text-gray-300 shadow-none cursor-not-allowed'}`}
+          className={`w-full py-6 rounded-[28px] font-black text-lg shadow-xl transition-all active-scale mb-10 ${agreed ? 'text-black' : 'bg-gray-100 text-gray-300 shadow-none cursor-not-allowed'}`}
+          style={agreed ? { backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` } : {}}
         >
             立即支付 ¥{selectedAmount.toFixed(2)}
         </button>

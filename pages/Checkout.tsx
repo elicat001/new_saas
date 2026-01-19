@@ -1,9 +1,13 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, X, Phone, CheckCircle2, Check, ShieldCheck, Wallet, Smartphone, CreditCard, MapPin, Plus, Navigation } from 'lucide-react';
+// Added MerchantConfig import
+import { MerchantConfig } from '../types';
 
 interface CheckoutProps {
   onBack: () => void;
+  // Added merchant prop
+  merchant: MerchantConfig;
 }
 
 type PaymentMethod = 'wechat' | 'alipay' | 'unionpay' | 'balance';
@@ -24,7 +28,8 @@ const MOCK_ADDRESSES: Address[] = [
   { id: 2, name: '粒', phone: '188****4331', city: '广州市', detail: '天河区珠江新城中轴路88号', tag: '家' }
 ];
 
-const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
+// Updated component signature to accept merchant prop
+const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
   const [orderType, setOrderType] = useState<OrderType>('堂食');
   const [paymentType, setPaymentType] = useState<PaymentMethod>('wechat');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -67,8 +72,8 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
         {orderType === '堂食' ? (
           <div className="bg-white p-6 rounded-[32px] shadow-sm">
              <div className="flex items-center gap-2 mb-6">
-                <h3 className="font-black text-2xl">棠小一（总店）</h3>
-                <div className="bg-[#f7e28b]/20 px-2 py-0.5 rounded text-[9px] font-black text-[#d4b945] uppercase">Open</div>
+                <h3 className="font-black text-2xl">{merchant.name}（总店）</h3>
+                <div className="px-2 py-0.5 rounded text-[9px] font-black uppercase" style={{ backgroundColor: `${merchant.theme.primary}33`, color: merchant.theme.secondary }}>Open</div>
              </div>
              <div className="flex items-center justify-between py-5 border-t border-gray-50 active-scale rounded-2xl px-2 -mx-2">
                 <span className="text-sm font-bold text-gray-800">订单备注</span>
@@ -88,8 +93,8 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
              </div>
              {selectedAddress ? (
                <div className="flex items-start gap-4">
-                  <div className="bg-[#f7e28b]/20 p-3 rounded-2xl shrink-0">
-                    <MapPin size={20} className="text-[#d4b945]" />
+                  <div className="p-3 rounded-2xl shrink-0" style={{ backgroundColor: `${merchant.theme.primary}33` }}>
+                    <MapPin size={20} style={{ color: merchant.theme.secondary }} />
                   </div>
                   <div className="flex-1">
                      <div className="flex items-center gap-2 mb-1">
@@ -148,7 +153,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
 
              <div className="flex justify-between items-center group active-scale">
                 <span className="text-sm font-bold text-gray-800">优惠券 / 礼品卡</span>
-                <div className="flex items-center gap-1.5 text-[11px] text-[#d4b945] font-black">
+                <div className="flex items-center gap-1.5 text-[11px] font-black" style={{ color: merchant.theme.secondary }}>
                    暂无可用 <ChevronRight size={14} className="text-gray-200" />
                 </div>
              </div>
@@ -176,17 +181,20 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
                   amount={60} 
                   bonus={5} 
                   tag="Limited" 
+                  merchant={merchant}
                   selected={selectedRecharge === 0} 
                   onClick={() => setSelectedRecharge(selectedRecharge === 0 ? null : 0)} 
                 />
                 <RechargeCard 
                   amount={20} 
                   tag="New" 
+                  merchant={merchant}
                   selected={selectedRecharge === 1} 
                   onClick={() => setSelectedRecharge(selectedRecharge === 1 ? null : 1)} 
                 />
                 <RechargeCard 
                   amount={30} 
+                  merchant={merchant}
                   selected={selectedRecharge === 2} 
                   onClick={() => setSelectedRecharge(selectedRecharge === 2 ? null : 2)} 
                 />
@@ -201,6 +209,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
                 id="wechat"
                 label="微信支付"
                 sublabel="WeChat Pay"
+                merchant={merchant}
                 icon={<div className="bg-[#07C160] text-white p-1.5 rounded-full"><Check size={16} strokeWidth={4} /></div>}
                 selected={paymentType === 'wechat'}
                 onClick={() => setPaymentType('wechat')}
@@ -210,6 +219,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
                 id="alipay"
                 label="支付宝支付"
                 sublabel="Alipay"
+                merchant={merchant}
                 icon={<div className="bg-[#1677FF] text-white p-1.5 rounded-full"><Smartphone size={16} strokeWidth={2.5} /></div>}
                 selected={paymentType === 'alipay'}
                 onClick={() => setPaymentType('alipay')}
@@ -219,6 +229,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
                 id="unionpay"
                 label="云闪付 / 银行卡"
                 sublabel="UnionPay"
+                merchant={merchant}
                 icon={<div className="bg-[#D7000F] text-white p-1.5 rounded-full"><CreditCard size={16} strokeWidth={2.5} /></div>}
                 selected={paymentType === 'unionpay'}
                 onClick={() => setPaymentType('unionpay')}
@@ -228,6 +239,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
                 id="balance"
                 label="余额支付"
                 sublabel="Balance Pay"
+                merchant={merchant}
                 extra="¥0.00"
                 icon={<div className="bg-gray-100 text-gray-300 p-1.5 rounded-full"><Wallet size={16} strokeWidth={2.5} /></div>}
                 selected={paymentType === 'balance'}
@@ -250,11 +262,11 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
          <div className="flex flex-col">
             <span className="text-[10px] text-gray-300 font-black uppercase tracking-widest mb-0.5">Total Amount</span>
             <div className="flex items-baseline gap-1.5">
-               <span className="text-sm font-black text-[#d4b945]">¥</span>
-               <span className="text-3xl font-black text-[#d4b945]">19.90</span>
+               <span className="text-sm font-black" style={{ color: merchant.theme.secondary }}>¥</span>
+               <span className="text-3xl font-black" style={{ color: merchant.theme.secondary }}>19.90</span>
             </div>
          </div>
-         <button onClick={handleConfirmOrder} className="bg-[#f7e28b] px-14 py-5 rounded-[24px] font-black text-lg shadow-xl shadow-brand-yellow/30 active-scale">
+         <button onClick={handleConfirmOrder} className="px-14 py-5 rounded-[24px] font-black text-lg shadow-xl active-scale" style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}>
             立即支付
          </button>
       </div>
@@ -276,25 +288,26 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
                        setSelectedAddress(addr);
                        setShowAddressSelector(false);
                      }}
-                     className={`bg-white rounded-[32px] p-6 shadow-sm border-2 transition-all active-scale ${selectedAddress?.id === addr.id ? 'border-[#f7e28b]' : 'border-transparent'}`}
+                     className={`bg-white rounded-[32px] p-6 shadow-sm border-2 transition-all active-scale ${selectedAddress?.id === addr.id ? '' : 'border-transparent'}`}
+                     style={selectedAddress?.id === addr.id ? { borderColor: merchant.theme.primary } : {}}
                    >
                       <div className="flex justify-between items-start mb-2">
                          <div className="flex items-center gap-2">
                             <span className="font-black text-lg">{addr.name}</span>
                             <span className="text-sm font-bold text-gray-300">{addr.phone}</span>
                          </div>
-                         {addr.isDefault && <span className="bg-[#f7e28b] text-black text-[9px] font-black px-2 py-0.5 rounded uppercase">Default</span>}
+                         {addr.isDefault && <span className="text-black text-[9px] font-black px-2 py-0.5 rounded uppercase" style={{ backgroundColor: merchant.theme.primary }}>Default</span>}
                       </div>
                       <p className="text-sm text-gray-500 font-bold leading-relaxed">{addr.city}{addr.detail}</p>
                       {selectedAddress?.id === addr.id && (
                         <div className="mt-4 flex justify-end">
-                           <div className="bg-[#f7e28b] text-white p-1.5 rounded-full"><Check size={14} strokeWidth={4} /></div>
+                           <div className="text-white p-1.5 rounded-full" style={{ backgroundColor: merchant.theme.primary }}><Check size={14} strokeWidth={4} /></div>
                         </div>
                       )}
                    </div>
                  ))}
 
-                 <button className="w-full bg-white border-2 border-dashed border-gray-200 rounded-[32px] py-10 flex flex-col items-center justify-center gap-3 active-scale text-gray-300 group hover:border-[#f7e28b] hover:text-[#f7e28b] transition-colors">
+                 <button className="w-full bg-white border-2 border-dashed border-gray-200 rounded-[32px] py-10 flex flex-col items-center justify-center gap-3 active-scale text-gray-300 group hover:text-[#f7e28b] transition-colors" style={{ borderColor: 'inherit' }}>
                     <Plus size={32} />
                     <span className="text-[11px] font-black uppercase tracking-widest">Add New Address</span>
                  </button>
@@ -309,7 +322,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
            <div className="bg-white w-full max-w-[340px] rounded-[48px] p-12 flex flex-col items-center relative animate-in zoom-in-95 duration-300 shadow-2xl">
               <button onClick={() => setShowPaymentModal(false)} className="absolute top-8 right-8 text-gray-300 hover:text-gray-500 transition-colors"><X size={24} /></button>
               <div className="bg-[#F8F8F8] p-10 rounded-[36px] mb-12 border border-gray-50 shadow-inner group relative">
-                 <div className="absolute inset-0 animate-ping opacity-10 bg-[#f7e28b] rounded-full"></div>
+                 <div className="absolute inset-0 animate-ping opacity-10 rounded-full" style={{ backgroundColor: merchant.theme.primary }}></div>
                  <Smartphone size={80} strokeWidth={1} className="text-gray-300 group-hover:text-gray-400 transition-colors" />
               </div>
               <p className="text-center font-black text-xl leading-tight text-gray-800 mb-2">
@@ -333,23 +346,24 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
   );
 };
 
-const RechargeCard = ({ amount, bonus, tag, selected, onClick }: any) => (
+const RechargeCard = ({ amount, bonus, tag, selected, onClick, merchant }: any) => (
   <div 
     onClick={onClick}
-    className={`min-w-[150px] bg-white p-6 rounded-[32px] border-2 transition-all relative shadow-sm overflow-hidden active-scale ${selected ? 'border-[#f7e28b] bg-[#f7e28b]/5' : 'border-transparent'}`}
+    className={`min-w-[150px] bg-white p-6 rounded-[32px] border-2 transition-all relative shadow-sm overflow-hidden active-scale ${selected ? '' : 'border-transparent'}`}
+    style={selected ? { borderColor: merchant.theme.primary, backgroundColor: `${merchant.theme.primary}0D` } : {}}
   >
-      {tag && <span className="absolute top-0 left-0 bg-[#f7e28b] text-[9px] font-black px-3 py-1 rounded-br-2xl uppercase tracking-wider">{tag}</span>}
+      {tag && <span className="absolute top-0 left-0 text-[9px] font-black px-3 py-1 rounded-br-2xl uppercase tracking-wider" style={{ backgroundColor: merchant.theme.primary }}>{tag}</span>}
       <div className="text-center py-4">
           <div className="text-2xl font-black text-black">{amount.toFixed(2)} <span className="text-xs font-bold text-gray-300">元</span></div>
-          <div className={`text-[10px] font-black mt-2 px-3 py-1 rounded-full inline-block ${bonus ? 'bg-[#f7e28b]/20 text-[#d4b945]' : 'bg-gray-50 text-gray-400'}`}>
+          <div className={`text-[10px] font-black mt-2 px-3 py-1 rounded-full inline-block ${bonus ? '' : 'bg-gray-50 text-gray-400'}`} style={bonus ? { backgroundColor: `${merchant.theme.primary}33`, color: merchant.theme.secondary } : {}}>
             {bonus ? `返现 ¥${bonus.toFixed(2)}` : '即刻到账'}
           </div>
       </div>
-      {selected && <div className="absolute bottom-3 right-3 text-[#f7e28b]"><CheckCircle2 size={20} fill="currentColor" className="text-white" /></div>}
+      {selected && <div className="absolute bottom-3 right-3" style={{ color: merchant.theme.primary }}><CheckCircle2 size={20} fill="currentColor" className="text-white" /></div>}
   </div>
 );
 
-const PaymentOption = ({ label, sublabel, icon, selected, disabled, onClick, extra }: any) => (
+const PaymentOption = ({ label, sublabel, icon, selected, disabled, onClick, extra, merchant }: any) => (
   <button 
     onClick={onClick} 
     disabled={disabled}
@@ -365,7 +379,7 @@ const PaymentOption = ({ label, sublabel, icon, selected, disabled, onClick, ext
            <span className="text-[9px] text-gray-300 font-black uppercase tracking-[0.2em]">{sublabel}</span>
         </div>
      </div>
-     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selected ? 'border-[#f7e28b] bg-[#f7e28b]' : 'border-gray-100'}`}>
+     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selected ? 'bg-black' : 'border-gray-100'}`} style={selected ? { borderColor: merchant.theme.primary, backgroundColor: merchant.theme.primary } : {}}>
         {selected && <div className="w-2.5 h-2.5 bg-white rounded-full"></div>}
      </div>
   </button>

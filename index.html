@@ -4,14 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>棠小一烘焙</title>
+    <title>SaaS 通用点餐系统</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
         
         :root {
-            --brand-yellow: #f7e28b;
-            --brand-yellow-dark: #e5cf7a;
+            /* SaaS 动态注入变量默认值 */
+            --brand-primary: #f7e28b;
+            --brand-secondary: #d4b945;
+            --radius-main: 40px;
+            --radius-inner: 24px;
             --bg-gray: #f8f8f8;
         }
 
@@ -53,11 +56,14 @@
         .shadow-up {
             box-shadow: 0 -10px 30px rgba(0,0,0,0.04);
         }
-
-        .safe-pb {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
         
+        /* 动态圆角工具类 */
+        .rounded-main { border-radius: var(--radius-main); }
+        .rounded-inner { border-radius: var(--radius-inner); }
+        .bg-brand { background-color: var(--brand-primary); }
+        .text-brand { color: var(--brand-secondary); }
+        .border-brand { border-color: var(--brand-primary); }
+
         .active-scale {
             transition: transform 0.1s ease;
         }
@@ -71,7 +77,8 @@
     "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "export": "https://esm.sh/export@^0.1.337"
   }
 }
 </script>

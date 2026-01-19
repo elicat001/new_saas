@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { ChevronRight, Clock, Search, History, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+// Added MerchantConfig import
+import { MerchantConfig } from '../types';
 
 const ORDERS_MOCK = [
   {
@@ -37,9 +39,12 @@ const ORDERS_MOCK = [
 
 interface OrdersProps {
   onSelectOrder: (id: string) => void;
+  // Added merchant prop
+  merchant: MerchantConfig;
 }
 
-const Orders: React.FC<OrdersProps> = ({ onSelectOrder }) => {
+// Updated component signature to accept merchant prop
+const Orders: React.FC<OrdersProps> = ({ onSelectOrder, merchant }) => {
   const [activeTab, setActiveTab] = useState('点单');
   const [activeFilter, setActiveFilter] = useState('全部');
 

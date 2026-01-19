@@ -1,9 +1,13 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, Info, TrendingUp, TrendingDown, Clock } from 'lucide-react';
+// Added MerchantConfig import
+import { MerchantConfig } from '../types';
 
 interface IntegralDetailsProps {
   onBack: () => void;
+  // Added merchant prop
+  merchant: MerchantConfig;
 }
 
 const MOCK_RECORDS = [
@@ -38,7 +42,8 @@ const MOCK_RECORDS = [
   }
 ];
 
-const IntegralDetails: React.FC<IntegralDetailsProps> = ({ onBack }) => {
+// Updated component signature to accept merchant prop
+const IntegralDetails: React.FC<IntegralDetailsProps> = ({ onBack, merchant }) => {
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'EARN' | 'SPENT'>('ALL');
 
   const filteredRecords = MOCK_RECORDS.filter(record => {
@@ -52,7 +57,7 @@ const IntegralDetails: React.FC<IntegralDetailsProps> = ({ onBack }) => {
     <div className="bg-[#F8F8F8] min-h-full flex flex-col pb-10">
       {/* Header */}
       <div className="bg-white px-5 pt-16 pb-4 flex items-center justify-between sticky top-0 z-50 border-b border-gray-50">
-        <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center active:scale-90 transition-transform">
+        <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center active-scale-90 transition-transform">
           <ChevronLeft size={22} />
         </button>
         <span className="font-black text-lg tracking-tight">积分明细</span>
@@ -61,8 +66,8 @@ const IntegralDetails: React.FC<IntegralDetailsProps> = ({ onBack }) => {
 
       {/* Hero Balance Summary */}
       <div className="bg-white p-8 flex flex-col items-center mb-4 shadow-sm">
-         <div className="w-14 h-14 bg-[#f7e28b]/20 rounded-full flex items-center justify-center mb-4">
-            <TrendingUp className="text-[#d4b945]" size={28} />
+         <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: `${merchant.theme.primary}33` }}>
+            <TrendingUp style={{ color: merchant.theme.secondary }} size={28} />
          </div>
          <span className="text-[11px] text-gray-400 font-black uppercase tracking-widest mb-1">Available Points</span>
          <h2 className="text-4xl font-black text-black">19</h2>
@@ -88,7 +93,7 @@ const IntegralDetails: React.FC<IntegralDetailsProps> = ({ onBack }) => {
              className={`text-sm font-black transition-colors relative pb-1 ${activeFilter === f ? 'text-black' : 'text-gray-300'}`}
            >
              {f === 'ALL' ? '全部' : f === 'EARN' ? '获得' : '消耗'}
-             {activeFilter === f && <div className="absolute bottom-0 left-0 w-full h-1 bg-[#f7e28b] rounded-full"></div>}
+             {activeFilter === f && <div className="absolute bottom-0 left-0 w-full h-1 rounded-full" style={{ backgroundColor: merchant.theme.primary }}></div>}
            </button>
          ))}
       </div>

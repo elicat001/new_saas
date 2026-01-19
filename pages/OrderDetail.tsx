@@ -1,13 +1,18 @@
 
 import React from 'react';
 import { ChevronLeft, Info, Headset, RefreshCw } from 'lucide-react';
+// Added MerchantConfig import
+import { MerchantConfig } from '../types';
 
 interface OrderDetailProps {
   onBack: () => void;
   orderId: string | null;
+  // Added merchant prop
+  merchant: MerchantConfig;
 }
 
-const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId }) => {
+// Updated component signature to accept merchant prop
+const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) => {
   // Mocking status check - in a real app this would come from a prop or API
   const isCancelled = true; 
 
@@ -97,7 +102,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId }) => {
           </div>
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-400 font-bold">下单门店</span>
-            <span className="font-black text-gray-800">棠小一（深圳总店）</span>
+            <span className="font-black text-gray-800">{merchant.name}（深圳总店）</span>
           </div>
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-400 font-bold">订单类型</span>

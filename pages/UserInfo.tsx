@@ -1,12 +1,17 @@
 
 import React, { useState, useRef } from 'react';
 import { ChevronLeft, Camera, Check, Loader2, X, RotateCw } from 'lucide-react';
+// Added MerchantConfig import
+import { MerchantConfig } from '../types';
 
 interface UserInfoProps {
   onBack: () => void;
+  // Added merchant prop
+  merchant: MerchantConfig;
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({ onBack }) => {
+// Updated component signature to accept merchant prop
+const UserInfo: React.FC<UserInfoProps> = ({ onBack, merchant }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [avatar, setAvatar] = useState("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=300&h=300&fit=crop");
@@ -81,7 +86,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ onBack }) => {
                 <div className="w-28 h-28 rounded-full bg-white border-[6px] border-white shadow-xl overflow-hidden">
                     <img src={avatar} className="w-full h-full object-cover" alt="Avatar" />
                 </div>
-                <button className="absolute bottom-1 right-1 bg-black text-[#f7e28b] p-2.5 rounded-full border-4 border-white shadow-lg">
+                <button className="absolute bottom-1 right-1 text-black p-2.5 rounded-full border-4 border-white shadow-lg" style={{ backgroundColor: merchant.theme.primary }}>
                     <Camera size={16} />
                 </button>
             </div>
@@ -99,7 +104,8 @@ const UserInfo: React.FC<UserInfoProps> = ({ onBack }) => {
                       <button 
                         key={g}
                         onClick={() => setFormData({...formData, gender: g})}
-                        className={`px-6 py-2 rounded-full text-xs font-black transition-all ${formData.gender === g ? 'bg-[#f7e28b] text-black shadow-md' : 'bg-gray-50 text-gray-300'}`}
+                        className={`px-6 py-2 rounded-full text-xs font-black transition-all ${formData.gender === g ? 'text-black shadow-md' : 'bg-gray-50 text-gray-300'}`}
+                        style={formData.gender === g ? { backgroundColor: merchant.theme.primary } : {}}
                       >
                         {g}
                       </button>
@@ -121,7 +127,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ onBack }) => {
         </div>
 
         <div className="bg-white/60 border border-white rounded-[24px] p-5 flex items-center gap-4 mb-10">
-           <div className="w-10 h-10 bg-[#f7e28b]/20 rounded-2xl flex items-center justify-center text-[#d4b945]">
+           <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${merchant.theme.primary}33`, color: merchant.theme.secondary }}>
               <Check size={20} strokeWidth={3} />
            </div>
            <p className="text-[10px] text-gray-400 font-bold leading-relaxed flex-1">
@@ -132,7 +138,8 @@ const UserInfo: React.FC<UserInfoProps> = ({ onBack }) => {
         <button 
           onClick={handleSave}
           disabled={isSaving}
-          className="w-full bg-[#f7e28b] py-6 rounded-[28px] font-black text-lg shadow-xl shadow-brand-yellow/30 active-scale flex items-center justify-center gap-3"
+          className="w-full py-6 rounded-[28px] font-black text-lg shadow-xl active-scale flex items-center justify-center gap-3"
+          style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}
         >
             {isSaving ? <Loader2 size={24} className="animate-spin" /> : '保存修改'}
         </button>

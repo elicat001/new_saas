@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { Search, Plus, Minus, Info, ChevronRight, MapPin, X, ShoppingCart, Users } from 'lucide-react';
+// Added MerchantConfig import
+import { MerchantConfig } from '../types';
 
 interface Product {
   id: string;
@@ -66,9 +68,12 @@ const PRODUCTS: Product[] = [
 
 interface MenuProps {
   onCheckout: () => void;
+  // Added merchant prop
+  merchant: MerchantConfig;
 }
 
-const Menu: React.FC<MenuProps> = ({ onCheckout }) => {
+// Updated component signature to accept merchant prop
+const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
   const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
   const [orderType, setOrderType] = useState<'堂食' | '配送' | '快递'>('堂食');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -104,7 +109,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout }) => {
 
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-1.5 active-scale">
-             <h1 className="text-2xl font-black tracking-tight">棠小一</h1>
+             <h1 className="text-2xl font-black tracking-tight">{merchant.name}</h1>
              <ChevronRight size={20} className="text-gray-200" />
           </div>
           <div className="flex bg-gray-100 rounded-full p-1.5">
@@ -218,7 +223,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout }) => {
       {/* Detail Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/80 z-[110] flex items-center justify-center p-6 backdrop-blur-md">
-          <div className="bg-white w-full max-w-sm rounded-[48px] overflow-hidden relative animate-in zoom-in-95 duration-300 shadow-2xl">
+          <div className="bg-white w-full max-sm rounded-[48px] overflow-hidden relative animate-in zoom-in-95 duration-300 shadow-2xl">
             <button onClick={() => setSelectedProduct(null)} className="absolute top-6 right-6 bg-white/20 backdrop-blur-md hover:bg-white/40 p-2.5 rounded-full text-white z-10 transition-colors">
               <X size={20} strokeWidth={3} />
             </button>

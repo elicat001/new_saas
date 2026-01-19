@@ -1,12 +1,17 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, Info, X, Tag, Ticket } from 'lucide-react';
+// Added MerchantConfig import
+import { MerchantConfig } from '../types';
 
 interface CouponsProps {
   onBack: () => void;
+  // Added merchant prop
+  merchant: MerchantConfig;
 }
 
-const Coupons: React.FC<CouponsProps> = ({ onBack }) => {
+// Updated component signature to accept merchant prop
+const Coupons: React.FC<CouponsProps> = ({ onBack, merchant }) => {
   const [activeTab, setActiveTab] = useState('可使用');
   const [showExchange, setShowExchange] = useState(false);
 
@@ -21,7 +26,7 @@ const Coupons: React.FC<CouponsProps> = ({ onBack }) => {
       <div className="bg-white px-5 pt-16 pb-4 flex items-center justify-between sticky top-0 z-50 border-b border-gray-50">
         <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center active-scale"><ChevronLeft size={22} /></button>
         <span className="font-black text-lg tracking-tight text-black">我的券包</span>
-        <button onClick={() => setShowExchange(true)} className="text-xs font-black text-[#d4b945] bg-[#f7e28b]/10 px-4 py-2 rounded-full active-scale">兑换码</button>
+        <button onClick={() => setShowExchange(true)} className="text-xs font-black px-4 py-2 rounded-full active-scale" style={{ backgroundColor: `${merchant.theme.primary}1A`, color: merchant.theme.secondary }}>兑换码</button>
       </div>
 
       {/* Tabs */}
@@ -34,7 +39,7 @@ const Coupons: React.FC<CouponsProps> = ({ onBack }) => {
                   className={`text-sm font-black transition-all relative pb-3 ${activeTab === t ? 'text-black' : 'text-gray-300'}`}
                 >
                   {t}
-                  {activeTab === t && <div className="absolute bottom-0 left-0 w-full h-1 bg-[#f7e28b] rounded-full"></div>}
+                  {activeTab === t && <div className="absolute bottom-0 left-0 w-full h-1 rounded-full" style={{ backgroundColor: merchant.theme.primary }}></div>}
                 </button>
             ))}
          </div>
@@ -45,7 +50,7 @@ const Coupons: React.FC<CouponsProps> = ({ onBack }) => {
         {activeTab === '可使用' ? (
           MOCK_COUPONS.map(coupon => (
             <div key={coupon.id} className="bg-white rounded-[32px] overflow-hidden shadow-soft border border-gray-50 flex active-scale">
-               <div className="w-32 bg-[#1a1a1a] flex flex-col items-center justify-center p-6 text-[#f7e28b] relative">
+               <div className="w-32 bg-[#1a1a1a] flex flex-col items-center justify-center p-6 relative" style={{ color: merchant.theme.primary }}>
                   <div className="text-2xl font-black">{coupon.amount}<span className="text-xs ml-0.5">{typeof coupon.amount === 'number' ? '元' : ''}</span></div>
                   <div className="text-[9px] font-bold opacity-60 mt-2 uppercase tracking-widest">{coupon.condition}</div>
                   {/* Decorative circles for ticket look */}
@@ -56,7 +61,7 @@ const Coupons: React.FC<CouponsProps> = ({ onBack }) => {
                   <div>
                     <div className="flex justify-between items-start mb-2">
                        <h4 className="text-[15px] font-black text-black leading-tight">{coupon.title}</h4>
-                       <span className="text-[8px] font-black bg-[#f7e28b]/20 text-[#d4b945] px-2 py-0.5 rounded uppercase tracking-wider">{coupon.tag}</span>
+                       <span className="text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider" style={{ backgroundColor: `${merchant.theme.primary}33`, color: merchant.theme.secondary }}>{coupon.tag}</span>
                     </div>
                     <p className="text-[10px] text-gray-300 font-bold flex items-center gap-1.5">
                        有效期至 {coupon.expire}
@@ -79,9 +84,9 @@ const Coupons: React.FC<CouponsProps> = ({ onBack }) => {
       {/* Exchange Modal */}
       {showExchange && (
         <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-8 backdrop-blur-md">
-           <div className="bg-white w-full max-w-sm rounded-[48px] p-10 flex flex-col items-center relative animate-in zoom-in-95 duration-300">
+           <div className="bg-white w-full max-sm rounded-[48px] p-10 flex flex-col items-center relative animate-in zoom-in-95 duration-300">
               <button onClick={() => setShowExchange(false)} className="absolute top-8 right-8 text-gray-300"><X size={24} /></button>
-              <div className="w-20 h-20 bg-[#f7e28b]/20 rounded-[28px] flex items-center justify-center text-[#d4b945] mb-8">
+              <div className="w-20 h-20 rounded-[28px] flex items-center justify-center mb-8" style={{ backgroundColor: `${merchant.theme.primary}33`, color: merchant.theme.secondary }}>
                  <Tag size={40} />
               </div>
               <h3 className="text-2xl font-black mb-2">兑换码</h3>
@@ -90,10 +95,13 @@ const Coupons: React.FC<CouponsProps> = ({ onBack }) => {
               <input 
                 type="text" 
                 placeholder="Enter Code Here" 
-                className="w-full bg-gray-50 border-2 border-transparent focus:border-[#f7e28b] focus:bg-white outline-none rounded-[24px] px-8 py-5 text-center font-black text-lg tracking-widest placeholder:text-gray-200 transition-all mb-10"
+                className="w-full bg-gray-50 border-2 border-transparent outline-none rounded-[24px] px-8 py-5 text-center font-black text-lg tracking-widest placeholder:text-gray-200 transition-all mb-10"
+                style={{ caretColor: merchant.theme.primary }}
+                onFocus={(e) => e.target.style.borderColor = merchant.theme.primary}
+                onBlur={(e) => e.target.style.borderColor = 'transparent'}
               />
               
-              <button className="w-full bg-[#f7e28b] py-5 rounded-[24px] font-black shadow-xl shadow-brand-yellow/30 active-scale uppercase tracking-widest">
+              <button className="w-full py-5 rounded-[24px] font-black shadow-xl active-scale uppercase tracking-widest" style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}>
                 Redeem Now
               </button>
            </div>
