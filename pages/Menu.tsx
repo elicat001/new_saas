@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { Search, Plus, Minus, Info, ChevronRight, MapPin, X, ShoppingCart, Users } from 'lucide-react';
-// Added MerchantConfig import
 import { MerchantConfig } from '../types';
 
 interface Product {
@@ -34,7 +33,8 @@ const PRODUCTS: Product[] = [
     vipPrice: 29.34,
     image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=400&fit=crop',
     category: '店铺线下活动',
-    description: '浓郁巧克力与松软蛋糕的完美结合，超大份量满足感。'
+    description: '浓郁巧克力与松软蛋糕的完美结合，超大份量满足感。',
+    specs: ['标准份', '加大份']
   },
   {
     id: '2',
@@ -53,7 +53,7 @@ const PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=400&fit=crop',
     category: '「😋」进店福利',
     description: '红丝绒与热带芒果的酸甜碰撞，口感轻盈细腻。',
-    specs: ['3寸']
+    specs: ['3寸', '6寸', '8寸']
   },
   {
     id: '4',
@@ -66,19 +66,24 @@ const PRODUCTS: Product[] = [
   }
 ];
 
+interface CartItem {
+  product: Product;
+  quantity: number;
+  selectedSpec?: string;
+}
+
 interface MenuProps {
   onCheckout: () => void;
-  // Added merchant prop
   merchant: MerchantConfig;
 }
 
-// Updated component signature to accept merchant prop
 const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
   const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
   const [orderType, setOrderType] = useState<'堂食' | '配送' | '快递'>('堂食');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedSpec, setSelectedSpec] = useState<string | undefined>(undefined);
   const [quantity, setQuantity] = useState(1);
-  const [cart, setCart] = useState<{product: Product, quantity: number}[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   const totalPrice = cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
@@ -86,11 +91,28 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
   const handleOpenProduct = (product: Product) => {
     setSelectedProduct(product);
     setQuantity(1);
+    setSelectedSpec(product.specs && product.specs.length > 0 ? product.specs[0] : undefined);
   };
 
   const addToCart = () => {
     if (selectedProduct) {
-      setCart(prev => [...prev, { product: selectedProduct, quantity }]);
+      setCart(prev => {
+        // Find if item with same ID and same SPEC already exists
+        const existingItemIndex = prev.findIndex(item => 
+          item.product.id === selectedProduct.id && 
+          item.selectedSpec === selectedSpec
+        );
+
+        if (existingItemIndex !== -1) {
+          // If exists, update quantity
+          const newCart = [...prev];
+          newCart[existingItemIndex].quantity += quantity;
+          return newCart;
+        } else {
+          // If new, add to cart
+          return [...prev, { product: selectedProduct, quantity, selectedSpec }];
+        }
+      });
       setSelectedProduct(null);
     }
   };
@@ -126,7 +148,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
         </div>
 
         <div className="text-[11px] text-gray-400 font-bold mb-6 flex items-center gap-1.5">
-          <MapPin size={12} className="text-[#d4b945]" /> 距离您 86.2km
+          <MapPin size={12} className="text-brand" /> 距离您 86.2km
         </div>
 
         {/* Promo Tags */}
@@ -166,7 +188,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
               >
                 <div className="relative shrink-0">
                    <img src={product.image} alt={product.name} className="w-24 h-24 rounded-[28px] object-cover shadow-sm border border-gray-50" />
-                   {product.vipPrice && <div className="absolute -top-1 -left-1 bg-black text-[#f7e28b] text-[7px] px-1.5 py-0.5 rounded-full font-black shadow-sm">VIP</div>}
+                   {product.vipPrice && <div className="absolute -top-1 -left-1 bg-black text-brand text-[7px] px-1.5 py-0.5 rounded-full font-black shadow-sm">VIP</div>}
                 </div>
                 <div className="flex-1 flex flex-col justify-between py-1">
                   <div>
@@ -176,10 +198,10 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex flex-col">
                         <span className="text-lg font-black text-black leading-none">¥{product.price}</span>
-                        {product.vipPrice && <span className="text-[10px] font-black text-[#d4b945] mt-1">¥{product.vipPrice}</span>}
+                        {product.vipPrice && <span className="text-[10px] font-black text-brand mt-1">¥{product.vipPrice}</span>}
                     </div>
-                    <button className="bg-[#f7e28b] px-4 py-2.5 rounded-full text-[10px] font-black tracking-wider shadow-sm active-scale">
-                      选规格
+                    <button className="bg-brand px-4 py-2.5 rounded-full text-[10px] font-black tracking-wider shadow-sm active-scale">
+                      {product.specs ? '选规格' : '加入购物车'}
                     </button>
                   </div>
                 </div>
@@ -198,7 +220,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
         <div className="fixed bottom-28 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] bg-[#1a1a1a] h-16 rounded-full flex items-center shadow-2xl z-[100] animate-in slide-in-from-bottom duration-500">
           <div className="flex-1 px-6 flex items-center gap-5">
             <div className="relative">
-                <div className="bg-[#f7e28b] p-3.5 rounded-full -mt-12 shadow-2xl border-[6px] border-[#1a1a1a] active-scale">
+                <div className="bg-brand p-3.5 rounded-full -mt-12 shadow-2xl border-[6px] border-[#1a1a1a] active-scale">
                     <ShoppingCart size={24} strokeWidth={2.5} />
                 </div>
                 <span className="absolute -top-12 -right-2 bg-red-500 text-white text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-[#1a1a1a]">{cartCount}</span>
@@ -213,7 +235,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
           </div>
           <button 
             onClick={onCheckout}
-            className="bg-[#f7e28b] h-full px-12 rounded-r-full font-black text-[13px] text-black active:bg-brand-yellow-dark transition-colors tracking-widest uppercase"
+            className="bg-brand h-full px-12 rounded-r-full font-black text-[13px] text-black active:opacity-90 transition-colors tracking-widest uppercase"
           >
             Settle
           </button>
@@ -223,31 +245,41 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
       {/* Detail Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/80 z-[110] flex items-center justify-center p-6 backdrop-blur-md">
-          <div className="bg-white w-full max-sm rounded-[48px] overflow-hidden relative animate-in zoom-in-95 duration-300 shadow-2xl">
+          <div className="bg-white w-full max-sm rounded-main overflow-hidden relative animate-in zoom-in-95 duration-300 shadow-2xl">
             <button onClick={() => setSelectedProduct(null)} className="absolute top-6 right-6 bg-white/20 backdrop-blur-md hover:bg-white/40 p-2.5 rounded-full text-white z-10 transition-colors">
               <X size={20} strokeWidth={3} />
             </button>
-            <div className="h-80 relative group">
+            <div className="h-64 relative group">
                 <img src={selectedProduct.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
-            <div className="p-10">
+            <div className="p-8">
               <div className="flex justify-between items-start mb-2">
-                 <h3 className="text-2xl font-black tracking-tight">{selectedProduct.name}</h3>
+                 <h3 className="text-xl font-black tracking-tight">{selectedProduct.name}</h3>
               </div>
-              <p className="text-[11px] text-gray-400 font-bold leading-relaxed mb-10">{selectedProduct.description}</p>
+              <p className="text-[11px] text-gray-400 font-bold leading-relaxed mb-8">{selectedProduct.description}</p>
               
-              <div className="mb-12">
-                <div className="text-[10px] font-black mb-4 text-gray-300 uppercase tracking-widest">Specs (Required)</div>
-                <div className="bg-[#f7e28b]/10 border-2 border-[#f7e28b] text-black px-8 py-3.5 rounded-[20px] inline-flex text-sm font-black shadow-sm">
-                  3寸
+              {selectedProduct.specs && (
+                <div className="mb-10">
+                  <div className="text-[10px] font-black mb-4 text-gray-300 uppercase tracking-widest">规格选择 (必选)</div>
+                  <div className="flex flex-wrap gap-3">
+                    {selectedProduct.specs.map(spec => (
+                      <button
+                        key={spec}
+                        onClick={() => setSelectedSpec(spec)}
+                        className={`px-6 py-2.5 rounded-inner text-[11px] font-black transition-all border-2 ${selectedSpec === spec ? 'bg-brand border-brand text-black shadow-sm' : 'bg-gray-50 border-transparent text-gray-400'}`}
+                      >
+                        {spec}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="flex items-center justify-between mb-10 pt-10 border-t border-gray-50">
+              <div className="flex items-center justify-between mb-10 pt-8 border-t border-gray-50">
                  <div>
                     <div className="flex items-baseline gap-1.5">
-                       <span className="text-sm font-black text-black/50">¥</span>
+                       <span className="text-xs font-black text-gray-400">¥</span>
                        <span className="text-3xl font-black text-black">{selectedProduct.price}</span>
                     </div>
                     <div className="text-[10px] text-gray-400 mt-1 font-black uppercase tracking-wider">Unit Price</div>
@@ -257,13 +289,13 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
                        <Minus size={20} strokeWidth={3} />
                     </button>
                     <span className="font-black text-xl w-6 text-center">{quantity}</span>
-                    <button onClick={() => setQuantity(q => q + 1)} className="w-10 h-10 bg-[#f7e28b] rounded-full flex items-center justify-center shadow-lg active-scale">
+                    <button onClick={() => setQuantity(q => q + 1)} className="w-10 h-10 bg-brand rounded-full flex items-center justify-center shadow-lg active-scale">
                        <Plus size={20} strokeWidth={3} />
                     </button>
                  </div>
               </div>
 
-              <button onClick={addToCart} className="w-full bg-[#f7e28b] py-6 rounded-[28px] font-black text-lg shadow-xl shadow-brand-yellow/30 active-scale uppercase tracking-widest">
+              <button onClick={addToCart} className="w-full bg-brand py-5 rounded-inner font-black text-lg shadow-xl active-scale uppercase tracking-widest" style={{ boxShadow: `0 10px 25px -5px var(--brand-primary)` }}>
                 Add to Cart
               </button>
             </div>
@@ -275,7 +307,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
 };
 
 const Tag = ({ text }: { text: string }) => (
-  <div className="px-4 py-2 border border-[#f7e28b] text-[#d4b945] text-[10px] font-black rounded-xl bg-[#f7e28b]/10 whitespace-nowrap tracking-wide">
+  <div className="px-4 py-2 border border-brand text-brand text-[10px] font-black rounded-xl bg-brand/10 whitespace-nowrap tracking-wide">
     {text}
   </div>
 );
