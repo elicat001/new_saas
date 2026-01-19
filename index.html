@@ -7,7 +7,7 @@
     <title>棠小一烘焙</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
         
         :root {
             --brand-yellow: #f7e28b;
@@ -18,8 +18,10 @@
         body {
             font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-gray);
-            color: #333;
+            color: #1a1a1a;
             -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             user-select: none;
             overflow: hidden;
         }
@@ -30,7 +32,6 @@
             flex-direction: column;
         }
 
-        /* Hide scrollbars but keep functionality */
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
@@ -40,34 +41,37 @@
         }
 
         .wechat-capsule {
-            background: rgba(255, 255, 255, 0.8);
-            border: 0.5px solid rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            background: rgba(255, 255, 255, 0.7);
+            border: 0.5px solid rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(15px);
+        }
+
+        .shadow-soft {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
         }
 
         .shadow-up {
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.04);
         }
 
-        /* Safe area handling for modern mobile browsers */
-        .pb-safe {
+        .safe-pb {
             padding-bottom: env(safe-area-inset-bottom);
         }
         
-        input:focus {
-            outline: none;
+        .active-scale {
+            transition: transform 0.1s ease;
+        }
+        .active-scale:active {
+            transform: scale(0.96);
         }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@19.0.0",
-    "react-dom": "https://esm.sh/react-dom@19.0.0",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "lucide-react": "https://esm.sh/lucide-react@0.460.0",
+    "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
   }
 }
 </script>
