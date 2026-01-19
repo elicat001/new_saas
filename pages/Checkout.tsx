@@ -1,19 +1,42 @@
 
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, X, Phone, CheckCircle2, Check, ShieldCheck, Wallet, Smartphone, CreditCard } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Phone, CheckCircle2, Check, ShieldCheck, Wallet, Smartphone, CreditCard, MapPin, Plus, Navigation } from 'lucide-react';
 
 interface CheckoutProps {
   onBack: () => void;
 }
 
 type PaymentMethod = 'wechat' | 'alipay' | 'unionpay' | 'balance';
+type OrderType = '堂食' | '配送' | '快递';
+
+interface Address {
+  id: number;
+  name: string;
+  phone: string;
+  city: string;
+  detail: string;
+  tag?: string;
+  isDefault?: boolean;
+}
+
+const MOCK_ADDRESSES: Address[] = [
+  { id: 1, name: '粒', phone: '188****4331', city: '深圳市', detail: '南山区粤海街道软件产业基地4栋B座', tag: '公司', isDefault: true },
+  { id: 2, name: '粒', phone: '188****4331', city: '广州市', detail: '天河区珠江新城中轴路88号', tag: '家' }
+];
 
 const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
+  const [orderType, setOrderType] = useState<OrderType>('堂食');
   const [paymentType, setPaymentType] = useState<PaymentMethod>('wechat');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showAddressSelector, setShowAddressSelector] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(MOCK_ADDRESSES[0]);
   const [selectedRecharge, setSelectedRecharge] = useState<number | null>(null);
 
   const handleConfirmOrder = () => {
+    if (orderType !== '堂食' && !selectedAddress) {
+      alert('请选择收货地址');
+      return;
+    }
     setShowPaymentModal(true);
   };
 
@@ -29,29 +52,64 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
       <div className="p-5 space-y-5">
         {/* Order Type Tabs */}
         <div className="flex bg-[#F2F2F2] p-1.5 rounded-[24px]">
-           {['堂食', '配送', '快递'].map(t => (
+           {(['堂食', '配送', '快递'] as OrderType[]).map(t => (
              <button 
                key={t} 
-               className={`flex-1 py-3.5 rounded-[18px] text-[13px] font-black transition-all ${t === '堂食' ? 'bg-white text-black shadow-[0_4px_15px_rgba(0,0,0,0.05)]' : 'text-gray-400'}`}
+               onClick={() => setOrderType(t)}
+               className={`flex-1 py-3.5 rounded-[18px] text-[13px] font-black transition-all ${orderType === t ? 'bg-white text-black shadow-[0_4px_15px_rgba(0,0,0,0.05)]' : 'text-gray-400'}`}
              >
                {t}
              </button>
            ))}
         </div>
 
-        {/* Shop Info Card */}
-        <div className="bg-white p-6 rounded-[32px] shadow-sm">
-           <div className="flex items-center gap-2 mb-6">
-              <h3 className="font-black text-2xl">棠小一</h3>
-              <div className="bg-[#f7e28b]/20 px-2 py-0.5 rounded text-[9px] font-black text-[#d4b945] uppercase">Open</div>
-           </div>
-           <div className="flex items-center justify-between py-5 border-t border-gray-50 active-scale rounded-2xl px-2 -mx-2">
-              <span className="text-sm font-bold text-gray-800">订单备注</span>
-              <div className="flex items-center gap-1.5 text-xs text-gray-400 font-bold">
-                 添加口味偏好、过敏原说明 <ChevronRight size={14} className="text-gray-200" />
-              </div>
-           </div>
-        </div>
+        {/* Dynamic Context Card: Shop for Dine-in, Address for Delivery */}
+        {orderType === '堂食' ? (
+          <div className="bg-white p-6 rounded-[32px] shadow-sm">
+             <div className="flex items-center gap-2 mb-6">
+                <h3 className="font-black text-2xl">棠小一（总店）</h3>
+                <div className="bg-[#f7e28b]/20 px-2 py-0.5 rounded text-[9px] font-black text-[#d4b945] uppercase">Open</div>
+             </div>
+             <div className="flex items-center justify-between py-5 border-t border-gray-50 active-scale rounded-2xl px-2 -mx-2">
+                <span className="text-sm font-bold text-gray-800">订单备注</span>
+                <div className="flex items-center gap-1.5 text-xs text-gray-400 font-bold">
+                   添加口味偏好、过敏原说明 <ChevronRight size={14} className="text-gray-200" />
+                </div>
+             </div>
+          </div>
+        ) : (
+          <div 
+            onClick={() => setShowAddressSelector(true)}
+            className="bg-white p-6 rounded-[32px] shadow-sm active-scale"
+          >
+             <div className="flex items-center justify-between mb-4">
+                <h3 className="font-black text-lg">收货地址</h3>
+                <ChevronRight size={18} className="text-gray-200" />
+             </div>
+             {selectedAddress ? (
+               <div className="flex items-start gap-4">
+                  <div className="bg-[#f7e28b]/20 p-3 rounded-2xl shrink-0">
+                    <MapPin size={20} className="text-[#d4b945]" />
+                  </div>
+                  <div className="flex-1">
+                     <div className="flex items-center gap-2 mb-1">
+                        <span className="font-black text-lg">{selectedAddress.name}</span>
+                        <span className="text-sm font-bold text-gray-400">{selectedAddress.phone}</span>
+                        {selectedAddress.tag && (
+                          <span className="bg-gray-100 text-gray-400 text-[9px] font-black px-1.5 py-0.5 rounded uppercase">{selectedAddress.tag}</span>
+                        )}
+                     </div>
+                     <p className="text-sm text-gray-500 font-bold leading-relaxed">{selectedAddress.city}{selectedAddress.detail}</p>
+                  </div>
+               </div>
+             ) : (
+               <div className="flex flex-col items-center py-6 text-gray-300">
+                  <Plus size={32} className="mb-2" />
+                  <span className="text-sm font-black uppercase tracking-widest">Select Shipping Address</span>
+               </div>
+             )}
+          </div>
+        )}
 
         {/* Items Card */}
         <div className="bg-white p-6 rounded-[32px] shadow-sm space-y-6">
@@ -201,9 +259,53 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack }) => {
          </button>
       </div>
 
+      {/* Address Selector Modal */}
+      {showAddressSelector && (
+        <div className="fixed inset-0 bg-black/60 z-[300] flex items-end justify-center backdrop-blur-sm animate-in fade-in duration-300">
+           <div className="bg-[#F8F8F8] w-full max-w-md rounded-t-[48px] p-8 pb-12 flex flex-col max-h-[85vh] animate-in slide-in-from-bottom duration-500">
+              <div className="flex items-center justify-between mb-8">
+                 <h3 className="text-2xl font-black">选择收货地址</h3>
+                 <button onClick={() => setShowAddressSelector(false)} className="bg-white p-3 rounded-full shadow-sm active-scale text-gray-300"><X size={20} /></button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto scrollbar-hide space-y-4">
+                 {MOCK_ADDRESSES.map(addr => (
+                   <div 
+                     key={addr.id}
+                     onClick={() => {
+                       setSelectedAddress(addr);
+                       setShowAddressSelector(false);
+                     }}
+                     className={`bg-white rounded-[32px] p-6 shadow-sm border-2 transition-all active-scale ${selectedAddress?.id === addr.id ? 'border-[#f7e28b]' : 'border-transparent'}`}
+                   >
+                      <div className="flex justify-between items-start mb-2">
+                         <div className="flex items-center gap-2">
+                            <span className="font-black text-lg">{addr.name}</span>
+                            <span className="text-sm font-bold text-gray-300">{addr.phone}</span>
+                         </div>
+                         {addr.isDefault && <span className="bg-[#f7e28b] text-black text-[9px] font-black px-2 py-0.5 rounded uppercase">Default</span>}
+                      </div>
+                      <p className="text-sm text-gray-500 font-bold leading-relaxed">{addr.city}{addr.detail}</p>
+                      {selectedAddress?.id === addr.id && (
+                        <div className="mt-4 flex justify-end">
+                           <div className="bg-[#f7e28b] text-white p-1.5 rounded-full"><Check size={14} strokeWidth={4} /></div>
+                        </div>
+                      )}
+                   </div>
+                 ))}
+
+                 <button className="w-full bg-white border-2 border-dashed border-gray-200 rounded-[32px] py-10 flex flex-col items-center justify-center gap-3 active-scale text-gray-300 group hover:border-[#f7e28b] hover:text-[#f7e28b] transition-colors">
+                    <Plus size={32} />
+                    <span className="text-[11px] font-black uppercase tracking-widest">Add New Address</span>
+                 </button>
+              </div>
+           </div>
+        </div>
+      )}
+
       {/* Payment Processing Modal */}
       {showPaymentModal && (
-        <div className="fixed inset-0 bg-black/70 z-[200] flex items-center justify-center p-8 backdrop-blur-md">
+        <div className="fixed inset-0 bg-black/70 z-[400] flex items-center justify-center p-8 backdrop-blur-md">
            <div className="bg-white w-full max-w-[340px] rounded-[48px] p-12 flex flex-col items-center relative animate-in zoom-in-95 duration-300 shadow-2xl">
               <button onClick={() => setShowPaymentModal(false)} className="absolute top-8 right-8 text-gray-300 hover:text-gray-500 transition-colors"><X size={24} /></button>
               <div className="bg-[#F8F8F8] p-10 rounded-[36px] mb-12 border border-gray-50 shadow-inner group relative">

@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { QrCode, Home as HomeIcon, MapPin, Truck, CalendarCheck, User, Scan, ChevronRight } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { QrCode, Home as HomeIcon, MapPin, Truck, CalendarCheck, User, Scan, ChevronRight, X, Loader2 } from 'lucide-react';
 
 interface HomeProps {
   onMenu: () => void;
@@ -8,6 +8,38 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode }) => {
+  const [isScanning, setIsScanning] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const startScan = async () => {
+    setIsScanning(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' }, 
+        audio: false 
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      
+      // Simulate a successful scan after 3 seconds
+      setTimeout(() => {
+        stopScan();
+        onMenu();
+      }, 3000);
+    } catch (err) {
+      console.error("Error accessing camera for scan:", err);
+      alert("无法访问相机，请检查权限设置。");
+      setIsScanning(false);
+    }
+  };
+
+  const stopScan = () => {
+    const stream = videoRef.current?.srcObject as MediaStream;
+    stream?.getTracks().forEach(track => track.stop());
+    setIsScanning(false);
+  };
+
   return (
     <div className="relative min-h-screen pb-32">
       {/* Brand Header */}
@@ -37,8 +69,8 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode }) => {
             </div>
             <div className="flex flex-col items-end gap-3">
                 <div 
-                  className="w-16 h-16 rounded-full border-[4px] border-white shadow-lg overflow-hidden active-scale"
-                  onClick={onUserInfo}
+                  className="w-16 h-16 rounded-full border-[4px] border-white shadow-lg overflow-hidden active-scale cursor-pointer"
+                  onClick={() => {}}
                 >
                     <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop" alt="Avatar" className="w-full h-full object-cover" />
                 </div>
@@ -54,7 +86,7 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode }) => {
 
           {/* Action: Scan */}
           <button 
-            onClick={() => onMenu()}
+            onClick={startScan}
             className="w-full bg-[#f7e28b] mb-8 py-5 rounded-[28px] flex items-center justify-center gap-5 shadow-xl shadow-brand-yellow/30 active-scale group"
           >
             <div className="bg-white/40 p-3 rounded-2xl group-hover:rotate-12 transition-transform">
@@ -107,6 +139,45 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode }) => {
             <div className="absolute top-0 right-0 w-32 h-full bg-white/5 skew-x-12 -mr-16 group-hover:bg-white/10 transition-colors"></div>
          </div>
       </div>
+
+      {/* Scanner Overlay */}
+      {isScanning && (
+        <div className="fixed inset-0 bg-black z-[500] flex flex-col items-center justify-center animate-in fade-in duration-300">
+           <div className="absolute top-16 right-6 z-10">
+              <button onClick={stopScan} className="p-4 bg-white/10 rounded-full backdrop-blur-md active-scale text-white">
+                <X size={24} />
+              </button>
+           </div>
+           
+           <video ref={videoRef} autoPlay playsInline className="absolute inset-0 w-full h-full object-cover" />
+           
+           <div className="relative z-10 flex flex-col items-center">
+              <div className="w-[65vw] aspect-square relative">
+                 {/* Scanner Corners */}
+                 <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-[#f7e28b] rounded-tl-3xl"></div>
+                 <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-[#f7e28b] rounded-tr-3xl"></div>
+                 <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-[#f7e28b] rounded-bl-3xl"></div>
+                 <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-[#f7e28b] rounded-br-3xl"></div>
+                 
+                 {/* Scanning Line */}
+                 <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#f7e28b] to-transparent shadow-[0_0_15px_#f7e28b] animate-bounce mt-10"></div>
+                 
+                 {/* Placeholder for camera content */}
+                 <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-black/20 backdrop-blur-[2px] w-full h-full rounded-3xl"></div>
+                 </div>
+              </div>
+              
+              <div className="mt-12 text-center space-y-4">
+                 <div className="flex items-center justify-center gap-3 bg-black/40 backdrop-blur-md px-6 py-3 rounded-full">
+                    <Loader2 size={16} className="text-[#f7e28b] animate-spin" />
+                    <span className="text-white text-xs font-black tracking-widest uppercase">Align with QR Code</span>
+                 </div>
+                 <p className="text-white/40 text-[10px] font-black tracking-widest uppercase">Scanning for tables...</p>
+              </div>
+           </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -122,7 +193,5 @@ const ServiceBtn = ({ icon, title, subtitle, onClick }: any) => (
     </div>
   </button>
 );
-
-const onUserInfo = () => {}; // Placeholder
 
 export default Home;
