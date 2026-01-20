@@ -1,73 +1,88 @@
+# 棠小一烘焙 (Tang Xiao Yi) · SaaS Digital Dining Engine
 
-# 棠小一烘焙 (Tang Xiao Yi Baking) 
-### 商业级通用型 SaaS 点餐系统前端解决方案
+[![React](https://img.shields.io/badge/React-19.0-61DAFB.svg?style=flat-square&logo=react)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC.svg?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6.svg?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![SaaS](https://img.shields.io/badge/Architecture-SaaS--Ready-00C7B7.svg?style=flat-square)](#)
+[![Design](https://img.shields.io/badge/UI/UX-High--Fidelity-FFD700.svg?style=flat-square)](#)
 
-[![React](https://img.shields.io/badge/React-19.0-blue.svg)](https://react.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-skyblue.svg)](https://tailwindcss.com/)
-[![SaaS](https://img.shields.io/badge/Architecture-SaaS--Ready-green.svg)](#)
-[![Design](https://img.shields.io/badge/UI/UX-High--Fidelity-gold.svg)](#)
-
-这是一个 1:1 深度还原的商业级 F&B (餐饮) 点餐小程序前端应用。本项目不仅是一个点餐模板，更是一个 **通用型 SaaS 前端引擎**。虽然演示以“棠小一烘焙”为品牌背景，但其底层逻辑支持不同商家、不同门店的灵活接入与个性化视觉装修。
-
----
-
-## 🚀 SaaS 核心能力
-
-### 1. 多租户品牌适配 (Multi-tenant Branding)
-- **通用组件库**：所有 UI 组件（按钮、卡片、导航）均基于原子化 CSS 构建，支持通过配置中心快速调整品牌色（如：`--brand-yellow`）、圆角弧度及字体风格。
-- **动态装修能力**：系统架构设计预留了配置接口，支持商家自主上传 Logo、Banner、商品分类及配色方案，实现“千店千面”的视觉效果。
-
-### 2. 跨业态兼容性 (General-Purpose Engine)
-- **多模式点餐**：内置“扫码点餐（堂食）”、“到店自取（外带）”、“同城配送”及“全国快递”四种业务流，适配烘焙、轻食、饮品等多种餐饮零售业态。
-- **柔性布局**：采用高度灵活的 Grid 与 Flex 布局，确保商家在上传不同长宽比的商品图片或Banner时，页面依然保持极佳的平衡感。
+A world-class, 1:1 commercial-grade SaaS ordering solution for the modern F&B industry. This project transcends a simple template; it is a **universal frontend engine** designed for multi-tenant scalability, high-fidelity interaction, and deep hardware integration.
 
 ---
 
-## ✨ 核心特性
+## 💎 Design Philosophy: "Physicality & Precision"
 
-### 1. 极致视觉与交互 (Visual & UX)
-- **高保真还原**：精密排版结合 `font-black` 强化品牌感，配合 `tracking-widest` 营造奢侈呼吸感。
-- **iOS 级质感**：统一使用 `48px/32px` 大圆角容器与 `shadow-soft` 多层柔和投影，模拟原生 App 交互体验。
-- **触觉反馈**：全局集成 `active-scale` 动效，为用户每一次点击提供真实的物理反馈。
+The UI is engineered to bridge the gap between web and native applications, following the **"Apple-esque"** aesthetic principles:
 
-### 2. 全链路业务覆盖
-- **智能点餐**：含多规格选择弹窗、动态购物车逻辑、复杂的阶梯价格计算。
-- **会员系统**：动态刷新会员码（含 60s 自动重载）、等级积分体系、复古票券样式的券包中心。
-- **安全结算**：集成微信/支付宝/云闪付等多渠道支付视觉方案，以及内置的“余额充值”营销闭环。
-- **硬件集成**：支持调用设备摄像头进行 **头像采集** 或 **扫码识读**，满足线下核销场景。
+- **Dynamic Theming**: All components utilize CSS Custom Properties (Variables) injected via the SaaS configuration layer, enabling instant brand switching (e.g., `#f7e28b` for Bakery, `#2D5A27` for Coffee).
+- **Tactile Feedback**: Every interactive element features the `active-scale` micro-animation, providing users with instant physical confirmation of their input.
+- **Organic Geometry**: Utilizing large-radius containers (`48px`) and multi-layered soft shadows (`shadow-soft`) to create a floating, modern card-based interface.
+- **Typography as Identity**: High-contrast font weights (`font-black`) paired with wide letter spacing (`tracking-widest`) establish a premium, luxury brand voice.
 
 ---
 
-## 🛠 技术栈
+## 🚀 SaaS Core Capabilities
 
-- **框架**: React 19 (ES Modules)
-- **样式**: Tailwind CSS (原子化设计，方便 SaaS 主题切换)
-- **图标**: Lucide React (精细化矢量定义)
-- **动画**: CSS3 Keyframes + Tailwind Transition
-- **逻辑**: React Hooks + TypeScript
+### 1. Multi-Tenant Architecture
+- **Tenant Context Isolation**: The system resolves `store_context` via a `scene_code` (QR scan), automatically re-skinning the entire UI and mapping API endpoints to specific merchant IDs.
+- **Cart Namespace Protection**: Shopping carts are persisted locally using merchant-specific namespaces (`cart_{merchant_id}`), preventing cross-store data leakage.
+
+### 2. Business Logic Versatility
+- **Hybrid Service Modes**: Supports "Dine-in (Table Scan)", "Self-Pickup", "Local Delivery", and "Express Shipping" within a single codebase.
+- **Store-State Intelligence**: Real-time checking of store operational status (`OPEN`, `REST`, `CLOSED`) with automatic UI fallback (disabling checkout, displaying banners).
 
 ---
 
-## 📂 架构概览
+## ✨ Features & Modules
+
+### 🛒 High-Precision Ordering
+- **Smooth Navigation**: Categorized menu with sticky headers and scroll-sync.
+- **Specification Engine**: Simulated support for complex SKU options (Size, Temp, Sugar).
+- **Smart Checkout**: Fee calculation logic with support for VIP pricing and merchant-specific discounts.
+
+### 💳 Transactional Integrity
+- **Mock Payment Flow**: Simulated `wx.requestPayment` integration with JSAPI logic.
+- **Order Tracking**: Real-time status polling using **Exponential Backoff** (1s -> 2s -> 4s -> 5s) to sync payment results efficiently.
+- **取餐号 (Take-No) System**: Automated generation of digital queue numbers for offline pickup.
+
+### 👤 Advanced Membership System
+- **Dynamic QR Identity**: A membership code center that auto-refreshes every 60 seconds to prevent unauthorized scanning.
+- **Hardware Integration**: Built-in support for **Camera Access** to capture user avatars directly within the app.
+- **Wallet & Points**: Full lifecycle management of user balance, integral points, and digital coupons with high-fidelity ticket aesthetics.
+
+---
+
+## 📂 Engineering Structure
 
 ```text
-├── App.tsx             # 核心路由与全局 SaaS 布局管理器
-├── types.ts            # 通用数据实体定义（商家、商品、订单）
+├── App.tsx             # Universal Router & SaaS Global Layout
+├── api.ts              # Abstracted Service Layer with Mock Latency
+├── types.ts            # Type-Safe Entity Definitions (Merchants, Orders)
+├── config.ts           # Centralized SaaS Tenant Mock Data
 ├── pages/
-│   ├── Home.tsx        # 商家门户（支持动态 Banner 与功能入口）
-│   ├── Menu.tsx        # 分类点餐引擎（支持多种展示模式）
-│   ├── Orders.tsx      # 全渠道订单追踪
-│   ├── Profile.tsx     # 会员中心（支持商家权益自定义）
-│   └── ...             # 高级二级页面（结算、地址、充值等）
+│   ├── Menu.tsx        # High-Performance Catalog & Cart Logic
+│   ├── Entry.tsx       # QR Scene Resolution Entry Point
+│   ├── MemberCode.tsx  # Dynamic Security Code Generator
+│   ├── TopUp.tsx       # Financial Marketing Loop (Balance Recharge)
+│   └── ...             # Extended Business Modules (Address, UserInfo)
 ```
 
 ---
 
-## 🎨 设计哲学
+## 🛠 Tech Stack
 
-> "为通用而生，为品牌而精。"
-
-本系统的开发初衷是打造一个 **“开箱即用”** 的商业闭环。我们不只关注单个页面的美观，更关注在 SaaS 环境下，代码的 **可复用性** 与 **可配置性**。无论是高端法式烘焙还是连锁茶饮，只需替换核心配置文件，即可瞬间变身为专属的品牌小程序。
+- **React 19**: Leveraging the latest concurrent features and hooks for state management.
+- **Tailwind CSS**: The backbone of our SaaS dynamic styling engine.
+- **Lucide React**: Crisp, pixel-perfect vector icons for the entire F&B journey.
+- **Local Storage API**: Used as a local database to simulate persistent server-side state.
 
 ---
-*© 2025 SaaS 餐饮数字化研发团队. 保留所有设计权利。*
+
+## 🎯 Our Vision
+
+> "Build for the scale of SaaS, design for the soul of the Brand."
+
+This solution is built to be **"Plug-and-Play"**. Whether it's a high-end French patisserie or a global tea chain, our engine adapts instantly through a simple JSON configuration change, delivering a boutique digital experience at scale.
+
+---
+*© 2025 SaaS F&B Digital Research Group. All Rights Reserved.*
