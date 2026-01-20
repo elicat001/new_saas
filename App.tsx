@@ -54,7 +54,7 @@ const App: React.FC = () => {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-white">
         <Loader2 className="animate-spin text-gray-300 mb-4" size={40} />
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Loading SaaS Engine...</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">系统引擎启动中...</p>
       </div>
     );
   }

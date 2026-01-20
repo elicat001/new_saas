@@ -31,11 +31,11 @@ const Profile: React.FC<ProfileProps> = ({
             <div className="flex items-center justify-between mb-12">
                 <div className="flex items-center gap-6">
                     <div className="w-20 h-20 rounded-full bg-gray-100 border-[6px] border-white shadow-xl overflow-hidden active-scale" onClick={onUserInfo}>
-                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop" alt="user" className="w-full h-full object-cover" />
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop" alt="用户" className="w-full h-full object-cover" />
                     </div>
                     <div onClick={onUserInfo} className="active-scale">
                         <div className="text-2xl font-black text-black leading-none mb-1.5">粒</div>
-                        <div className="text-gray-300 text-[11px] font-black tracking-widest uppercase">Platinum Member</div>
+                        <div className="text-gray-300 text-[11px] font-black tracking-widest uppercase">铂金会员</div>
                     </div>
                 </div>
                 <button className="p-3 bg-gray-50 rounded-inner active-scale text-gray-400"><Settings size={20} /></button>

@@ -83,7 +83,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
     return (
       <div className="flex flex-col h-full bg-white items-center justify-center">
         <Loader2 className="animate-spin text-gray-200 mb-2" />
-        <span className="text-[10px] font-black text-gray-300 tracking-widest uppercase">Fetching Menu...</span>
+        <span className="text-[10px] font-black text-gray-300 tracking-widest uppercase">正在加载菜单...</span>
       </div>
     );
   }
@@ -206,7 +206,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
                 {isAdding ? (
                   <>
                     <Loader2 size={24} className="animate-spin" />
-                    <span>Processing</span>
+                    <span>正在处理</span>
                   </>
                 ) : (
                   '加入购物车'

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ChevronLeft, Info, Headset, RefreshCw, X, AlertCircle } from 'lucide-react';
+import { ChevronLeft, Info, Headset, RefreshCw, X, AlertCircle, Check, Store, Clock, Package, CheckCircle2 } from 'lucide-react';
 import { MerchantConfig } from '../types';
 
 interface OrderDetailProps {
@@ -10,9 +10,18 @@ interface OrderDetailProps {
 }
 
 const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) => {
-  // SaaS: State for order status and confirmation UI
   const [isCancelled, setIsCancelled] = useState(false); 
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  
+  // SaaS: Track the current step of the order (0: Placed, 1: Preparing, 2: Ready, 3: Completed)
+  const [currentStep] = useState(1);
+
+  const steps = [
+    { label: '已下单', icon: <Clock size={14} /> },
+    { label: '制作中', icon: <Store size={14} /> },
+    { label: '待自取', icon: <Package size={14} /> },
+    { label: '已完成', icon: <CheckCircle2 size={14} /> }
+  ];
 
   const handleCancelOrder = () => {
     setIsCancelled(true);
@@ -30,15 +39,64 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
         <div className="w-10"></div>
       </div>
 
-      {/* Status Section */}
-      <div className="px-4 py-12 flex flex-col items-center justify-center bg-white mb-4 shadow-sm">
-        <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-5 transition-colors duration-500 ${isCancelled ? 'bg-gray-100' : 'bg-brand/20'}`}>
-           <Info className={isCancelled ? 'text-gray-300' : 'text-brand'} size={32} />
-        </div>
-        <h2 className={`text-4xl font-black mb-3 transition-colors duration-500 ${isCancelled ? 'text-gray-300' : 'text-black'}`}>
-          {isCancelled ? '已取消' : '正在出餐'}
-        </h2>
-        <p className="text-xs text-gray-400 font-bold tracking-widest uppercase">Ordered at 2025-11-19 17:45:43</p>
+      {/* Enhanced Status Section with Progress Tracker */}
+      <div className="bg-white px-6 py-10 mb-4 shadow-sm">
+        {isCancelled ? (
+          <div className="flex flex-col items-center py-4">
+             <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                <X className="text-gray-300" size={32} />
+             </div>
+             <h2 className="text-3xl font-black text-gray-300 mb-1">订单已取消</h2>
+             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">交易已关闭</p>
+          </div>
+        ) : (
+          <div className="w-full">
+            <div className="flex items-center justify-between mb-10">
+               <div>
+                  <h2 className="text-3xl font-black text-black mb-1">{steps[currentStep].label}</h2>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">预计还需 15-20 分钟</p>
+               </div>
+               <div className="bg-brand/10 p-3 rounded-2xl">
+                 <Store className="text-brand" size={24} />
+               </div>
+            </div>
+
+            {/* Stepper Implementation */}
+            <div className="flex items-start justify-between relative px-2">
+              {/* Connecting Background Line */}
+              <div className="absolute top-4 left-6 right-6 h-[2px] bg-gray-100 -z-0"></div>
+              {/* Active Progress Line */}
+              <div 
+                className="absolute top-4 left-6 h-[2px] bg-brand -z-0 transition-all duration-1000 ease-out"
+                style={{ width: `${(currentStep / (steps.length - 1)) * 88}%` }}
+              ></div>
+
+              {steps.map((step, idx) => {
+                const isCompleted = idx < currentStep;
+                const isActive = idx === currentStep;
+                
+                return (
+                  <div key={idx} className="flex flex-col items-center relative z-10 w-16">
+                    <div 
+                      className={`w-9 h-9 rounded-full flex items-center justify-center border-4 transition-all duration-500 ${
+                        isCompleted ? 'bg-brand border-white shadow-md' : 
+                        isActive ? 'bg-white border-brand shadow-lg scale-110' : 
+                        'bg-white border-gray-100 text-gray-200'
+                      }`}
+                    >
+                      {isCompleted ? <Check size={16} strokeWidth={4} /> : step.icon}
+                    </div>
+                    <span className={`text-[9px] font-black mt-3 uppercase tracking-tighter whitespace-nowrap ${
+                      isActive ? 'text-black' : 'text-gray-300'
+                    }`}>
+                      {step.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Order Main Card */}
@@ -46,22 +104,21 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
         <div className="bg-white rounded-[32px] overflow-hidden shadow-sm border border-gray-50">
           <div className="p-6 border-b border-gray-50 flex justify-between items-center">
             <div className="flex flex-col">
-              <span className="text-[10px] text-gray-300 font-black uppercase tracking-widest mb-1">Queue ID</span>
+              <span className="text-[10px] text-gray-300 font-black uppercase tracking-widest mb-1">取餐号</span>
               <span className={`text-3xl font-black transition-colors ${isCancelled ? 'text-gray-200' : 'text-brand'}`}>{orderId || '8085'}</span>
             </div>
             <div className="text-right">
-              <span className="text-[10px] text-gray-300 font-black block mb-1">Status</span>
+              <span className="text-[10px] text-gray-300 font-black block mb-1">点餐模式</span>
               <span className={`text-sm font-black transition-colors ${isCancelled ? 'text-gray-300' : 'text-black'}`}>
-                {isCancelled ? '订单失效' : '制作中 (2/3)'}
+                堂食·即时
               </span>
             </div>
           </div>
           
-          {/* Product Section */}
           <div className={`p-6 transition-all duration-700 ${isCancelled ? 'grayscale opacity-60' : ''}`}>
             <div className="flex justify-between items-center mb-6">
                 <div className="text-sm font-black text-gray-800">商品清单 (50份)</div>
-                <div className="text-[10px] font-black text-gray-300 uppercase">Paid</div>
+                <div className="text-[10px] font-black text-gray-300 uppercase">已支付 ¥2445.00</div>
             </div>
             
             <div className="flex gap-5 mb-8">
@@ -94,7 +151,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
       {/* Info Card */}
       <div className="px-5 mb-32">
         <div className="bg-white rounded-[32px] p-8 space-y-6 shadow-sm border border-gray-50">
-          <h4 className="text-[10px] font-black text-gray-300 uppercase tracking-widest border-b border-gray-50 pb-3">Order Info</h4>
+          <h4 className="text-[10px] font-black text-gray-300 uppercase tracking-widest border-b border-gray-50 pb-3">订单信息</h4>
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-400 font-bold">订单编号</span>
             <span className="font-black text-gray-800">2025111917454332274</span>
@@ -106,10 +163,6 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-400 font-bold">下单门店</span>
             <span className="font-black text-gray-800">{merchant.name}（深圳总店）</span>
-          </div>
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-400 font-bold">订单类型</span>
-            <span className="font-black text-gray-800">堂食</span>
           </div>
         </div>
       </div>

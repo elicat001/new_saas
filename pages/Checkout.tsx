@@ -1,12 +1,10 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, X, Phone, CheckCircle2, Check, ShieldCheck, Wallet, Smartphone, CreditCard, MapPin, Plus, Navigation } from 'lucide-react';
-// Added MerchantConfig import
 import { MerchantConfig } from '../types';
 
 interface CheckoutProps {
   onBack: () => void;
-  // Added merchant prop
   merchant: MerchantConfig;
 }
 
@@ -28,7 +26,6 @@ const MOCK_ADDRESSES: Address[] = [
   { id: 2, name: '粒', phone: '188****4331', city: '广州市', detail: '天河区珠江新城中轴路88号', tag: '家' }
 ];
 
-// Updated component signature to accept merchant prop
 const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
   const [orderType, setOrderType] = useState<OrderType>('堂食');
   const [paymentType, setPaymentType] = useState<PaymentMethod>('wechat');
@@ -47,7 +44,6 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
 
   return (
     <div className="bg-[#F8F8F8] min-h-screen flex flex-col pb-40">
-      {/* Header */}
       <div className="bg-white px-5 pt-16 pb-4 flex items-center justify-between sticky top-0 z-50 border-b border-gray-50">
         <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center active-scale"><ChevronLeft size={22} /></button>
         <span className="font-black text-lg tracking-tight">确认订单</span>
@@ -55,7 +51,6 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
       </div>
 
       <div className="p-5 space-y-5">
-        {/* Order Type Tabs */}
         <div className="flex bg-[#F2F2F2] p-1.5 rounded-[24px]">
            {(['堂食', '配送', '快递'] as OrderType[]).map(t => (
              <button 
@@ -68,12 +63,11 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
            ))}
         </div>
 
-        {/* Dynamic Context Card: Shop for Dine-in, Address for Delivery */}
         {orderType === '堂食' ? (
           <div className="bg-white p-6 rounded-[32px] shadow-sm">
              <div className="flex items-center gap-2 mb-6">
                 <h3 className="font-black text-2xl">{merchant.name}（总店）</h3>
-                <div className="px-2 py-0.5 rounded text-[9px] font-black uppercase" style={{ backgroundColor: `${merchant.theme.primary}33`, color: merchant.theme.secondary }}>Open</div>
+                <div className="px-2 py-0.5 rounded text-[9px] font-black uppercase" style={{ backgroundColor: `${merchant.theme.primary}33`, color: merchant.theme.secondary }}>营业中</div>
              </div>
              <div className="flex items-center justify-between py-5 border-t border-gray-50 active-scale rounded-2xl px-2 -mx-2">
                 <span className="text-sm font-bold text-gray-800">订单备注</span>
@@ -110,13 +104,12 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
              ) : (
                <div className="flex flex-col items-center py-6 text-gray-300">
                   <Plus size={32} className="mb-2" />
-                  <span className="text-sm font-black uppercase tracking-widest">Select Shipping Address</span>
+                  <span className="text-sm font-black uppercase tracking-widest">请选择收货地址</span>
                </div>
              )}
           </div>
         )}
 
-        {/* Items Card */}
         <div className="bg-white p-6 rounded-[32px] shadow-sm space-y-6">
            <h3 className="font-black text-lg flex items-center justify-between">
               <span>商品清单</span>
@@ -162,7 +155,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
            <div className="flex justify-end pt-4 border-t border-gray-50">
               <div className="flex flex-col items-end">
                  <div className="flex items-baseline gap-2">
-                    <span className="text-[11px] text-gray-400 font-bold">优惠 ¥0.00</span>
+                    <span className="text-[11px] text-gray-400 font-bold">已优惠 ¥0.00</span>
                     <span className="text-xs text-gray-400 font-bold">小计</span>
                     <span className="font-black text-2xl text-black">¥19.90</span>
                  </div>
@@ -170,24 +163,23 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
            </div>
         </div>
 
-        {/* Top Up Promotion */}
         <div className="space-y-4 pt-2">
             <h4 className="text-sm font-black px-1 flex items-center justify-between">
                <span>充值超值购</span>
-               <span className="text-[10px] text-gray-400 font-bold">更多金额 <ChevronRight size={10} /></span>
+               <span className="text-[10px] text-gray-400 font-bold">查看更多金额 <ChevronRight size={10} /></span>
             </h4>
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
                 <RechargeCard 
                   amount={60} 
                   bonus={5} 
-                  tag="Limited" 
+                  tag="特惠" 
                   merchant={merchant}
                   selected={selectedRecharge === 0} 
                   onClick={() => setSelectedRecharge(selectedRecharge === 0 ? null : 0)} 
                 />
                 <RechargeCard 
                   amount={20} 
-                  tag="New" 
+                  tag="新品" 
                   merchant={merchant}
                   selected={selectedRecharge === 1} 
                   onClick={() => setSelectedRecharge(selectedRecharge === 1 ? null : 1)} 
@@ -201,7 +193,6 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
             </div>
         </div>
 
-        {/* Payment Options Refined */}
         <div className="bg-white p-6 rounded-[32px] shadow-sm">
            <h4 className="text-sm font-black mb-6">选择支付方式</h4>
            <div className="space-y-5">
@@ -240,7 +231,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
                 label="余额支付"
                 sublabel="Balance Pay"
                 merchant={merchant}
-                extra="¥0.00"
+                extra="可用余额 ¥0.00"
                 icon={<div className="bg-gray-100 text-gray-300 p-1.5 rounded-full"><Wallet size={16} strokeWidth={2.5} /></div>}
                 selected={paymentType === 'balance'}
                 disabled={true}
@@ -251,16 +242,15 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
            <div className="mt-8 pt-6 border-t border-gray-50 flex flex-col items-center justify-center gap-2">
               <div className="flex items-center gap-2 text-[10px] text-gray-300 font-bold uppercase tracking-widest">
                 <ShieldCheck size={14} className="text-gray-200" />
-                <span>Secure Payment Protected</span>
+                <span>支付环境已由系统加密保护</span>
               </div>
            </div>
         </div>
       </div>
 
-      {/* Footer Confirm Bar */}
       <div className="fixed bottom-0 inset-x-0 p-6 bg-white shadow-up flex items-center justify-between z-[60] pb-10">
          <div className="flex flex-col">
-            <span className="text-[10px] text-gray-300 font-black uppercase tracking-widest mb-0.5">Total Amount</span>
+            <span className="text-[10px] text-gray-300 font-black uppercase tracking-widest mb-0.5">应付总额</span>
             <div className="flex items-baseline gap-1.5">
                <span className="text-sm font-black" style={{ color: merchant.theme.secondary }}>¥</span>
                <span className="text-3xl font-black" style={{ color: merchant.theme.secondary }}>19.90</span>
@@ -271,7 +261,6 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
          </button>
       </div>
 
-      {/* Address Selector Modal */}
       {showAddressSelector && (
         <div className="fixed inset-0 bg-black/60 z-[300] flex items-end justify-center backdrop-blur-sm animate-in fade-in duration-300">
            <div className="bg-[#F8F8F8] w-full max-w-md rounded-t-[48px] p-8 pb-12 flex flex-col max-h-[85vh] animate-in slide-in-from-bottom duration-500">
@@ -296,7 +285,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
                             <span className="font-black text-lg">{addr.name}</span>
                             <span className="text-sm font-bold text-gray-300">{addr.phone}</span>
                          </div>
-                         {addr.isDefault && <span className="text-black text-[9px] font-black px-2 py-0.5 rounded uppercase" style={{ backgroundColor: merchant.theme.primary }}>Default</span>}
+                         {addr.isDefault && <span className="text-black text-[9px] font-black px-2 py-0.5 rounded uppercase" style={{ backgroundColor: merchant.theme.primary }}>默认</span>}
                       </div>
                       <p className="text-sm text-gray-500 font-bold leading-relaxed">{addr.city}{addr.detail}</p>
                       {selectedAddress?.id === addr.id && (
@@ -309,14 +298,13 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
 
                  <button className="w-full bg-white border-2 border-dashed border-gray-200 rounded-[32px] py-10 flex flex-col items-center justify-center gap-3 active-scale text-gray-300 group hover:text-[#f7e28b] transition-colors" style={{ borderColor: 'inherit' }}>
                     <Plus size={32} />
-                    <span className="text-[11px] font-black uppercase tracking-widest">Add New Address</span>
+                    <span className="text-[11px] font-black uppercase tracking-widest">新增收货地址</span>
                  </button>
               </div>
            </div>
         </div>
       )}
 
-      {/* Payment Processing Modal */}
       {showPaymentModal && (
         <div className="fixed inset-0 bg-black/70 z-[400] flex items-center justify-center p-8 backdrop-blur-md">
            <div className="bg-white w-full max-w-[340px] rounded-[48px] p-12 flex flex-col items-center relative animate-in zoom-in-95 duration-300 shadow-2xl">
@@ -326,17 +314,17 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
                  <Smartphone size={80} strokeWidth={1} className="text-gray-300 group-hover:text-gray-400 transition-colors" />
               </div>
               <p className="text-center font-black text-xl leading-tight text-gray-800 mb-2">
-                 正在拉起支付
+                 正在唤起支付
               </p>
               <p className="text-center text-sm font-medium text-gray-400 leading-relaxed mb-12">
-                 请在弹出的支付窗口中<br/>完成身份验证。
+                 请在弹出的系统窗口中<br/>完成身份验证与支付确认。
               </p>
               <div className="flex flex-col items-center gap-6 w-full">
                  <button onClick={() => setShowPaymentModal(false)} className="w-full bg-gray-50 py-4 rounded-2xl text-gray-400 font-black text-sm active:bg-gray-100 transition-colors">
                    支付遇到问题？
                  </button>
                  <button onClick={() => setShowPaymentModal(false)} className="text-red-400 font-black tracking-widest uppercase text-xs active:opacity-60 transition-opacity">
-                   Cancel Payment
+                   取消支付
                  </button>
               </div>
            </div>
@@ -356,7 +344,7 @@ const RechargeCard = ({ amount, bonus, tag, selected, onClick, merchant }: any) 
       <div className="text-center py-4">
           <div className="text-2xl font-black text-black">{amount.toFixed(2)} <span className="text-xs font-bold text-gray-300">元</span></div>
           <div className={`text-[10px] font-black mt-2 px-3 py-1 rounded-full inline-block ${bonus ? '' : 'bg-gray-50 text-gray-400'}`} style={bonus ? { backgroundColor: `${merchant.theme.primary}33`, color: merchant.theme.secondary } : {}}>
-            {bonus ? `返现 ¥${bonus.toFixed(2)}` : '即刻到账'}
+            {bonus ? `赠送 ¥${bonus.toFixed(2)}` : '即刻到账'}
           </div>
       </div>
       {selected && <div className="absolute bottom-3 right-3" style={{ color: merchant.theme.primary }}><CheckCircle2 size={20} fill="currentColor" className="text-white" /></div>}

@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { QrCode, Home as HomeIcon, MapPin, Truck, CalendarCheck, User, Scan, ChevronRight, X, Loader2 } from 'lucide-react';
+import { QrCode, Home as HomeIcon, MapPin, Truck, CalendarCheck, User, Scan, ChevronRight, X } from 'lucide-react';
 import { MerchantConfig } from '../types';
 
 interface HomeProps {
@@ -40,6 +40,14 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode, merchant }) => {
     setIsScanning(false);
   };
 
+  // Logic to determine grid columns based on enabled features
+  const enabledFeatures = [
+    { id: 'dineIn', icon: <HomeIcon size={24} />, title: "堂食", subtitle: "DINE IN", enabled: merchant.features.dineIn },
+    { id: 'pickup', icon: <User size={24} />, title: "自取", subtitle: "PICK UP", enabled: merchant.features.pickup },
+    { id: 'delivery', icon: <Truck size={24} />, title: "外送", subtitle: "DELIVERY", enabled: merchant.features.delivery },
+    { id: 'express', icon: <CalendarCheck size={24} />, title: "快递", subtitle: "EXPRESS", enabled: merchant.features.express },
+  ].filter(f => f.enabled);
+
   return (
     <div className="relative min-h-screen pb-32">
       <div className="bg-[#e5e5e5] pt-16 pb-32 px-6 flex flex-col items-center relative overflow-hidden transition-all duration-500">
@@ -59,7 +67,7 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode, merchant }) => {
           >
              <img 
                src={merchant.mascot} 
-               alt="Mascot" 
+               alt="吉祥物" 
                className="w-32 h-32 object-cover rounded-inner shadow-sm"
              />
           </div>
@@ -70,12 +78,12 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode, merchant }) => {
         <div className="bg-white p-8 shadow-soft rounded-main transition-all duration-500">
           <div className="flex justify-between items-center mb-10">
             <div>
-              <div className="text-gray-400 text-xs font-black tracking-widest mb-1.5 uppercase">Welcome Back</div>
-              <div className="text-3xl font-black text-black tracking-tighter">粒 <span className="text-lg font-bold text-gray-300 ml-1">Member</span></div>
+              <div className="text-gray-400 text-xs font-black tracking-widest mb-1.5 uppercase">欢迎回来</div>
+              <div className="text-3xl font-black text-black tracking-tighter">粒 <span className="text-lg font-bold text-gray-300 ml-1">会员</span></div>
             </div>
             <div className="flex flex-col items-end gap-3">
                 <div className="w-16 h-16 rounded-full border-[4px] border-white shadow-lg overflow-hidden active-scale cursor-pointer">
-                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop" alt="Avatar" className="w-full h-full object-cover" />
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop" alt="头像" className="w-full h-full object-cover" />
                 </div>
                 <button 
                   onClick={onMemberCode}
@@ -97,15 +105,25 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode, merchant }) => {
             </div>
             <div className="text-left">
               <div className="text-lg font-black text-black leading-none">扫码点餐</div>
-              <div className="text-[10px] text-black/50 font-black uppercase tracking-[0.15em] mt-1.5">Scan to order</div>
+              <div className="text-[10px] text-black/50 font-black uppercase tracking-[0.15em] mt-1.5">扫码极速下单</div>
             </div>
           </button>
 
-          <div className="grid grid-cols-2 gap-px bg-gray-50 rounded-inner overflow-hidden border border-gray-50">
-            {merchant.features.dineIn && <ServiceBtn icon={<HomeIcon size={24} />} title="堂食" subtitle="DINE IN" onClick={onMenu} />}
-            {merchant.features.pickup && <ServiceBtn icon={<User size={24} />} title="自取" subtitle="PICK UP" onClick={onMenu} />}
-            {merchant.features.delivery && <ServiceBtn icon={<Truck size={24} />} title="外送" subtitle="DELIVERY" onClick={onMenu} />}
-            {merchant.features.express && <ServiceBtn icon={<CalendarCheck size={24} />} title="快递" subtitle="EXPRESS" onClick={onMenu} />}
+          <div className="grid grid-cols-2 gap-0.5 bg-gray-50 rounded-[32px] overflow-hidden border border-gray-50">
+            {enabledFeatures.map((feature, idx) => (
+              <ServiceBtn 
+                key={feature.id}
+                icon={feature.icon} 
+                title={feature.title} 
+                subtitle={feature.subtitle} 
+                onClick={onMenu}
+                className={`
+                  ${idx === 0 ? 'border-r border-b' : ''}
+                  ${idx === 1 ? 'border-b' : ''}
+                  ${idx === 2 ? 'border-r' : ''}
+                `}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -122,7 +140,7 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode, merchant }) => {
                 </div>
              </div>
              <div className="text-[11px] font-black text-brand flex items-center gap-1.5 bg-brand/10 px-4 py-2 rounded-full">
-               86km <ChevronRight size={14} />
+               距离您 86km <ChevronRight size={14} />
              </div>
           </div>
       </div>
@@ -146,14 +164,17 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode, merchant }) => {
   );
 };
 
-const ServiceBtn = ({ icon, title, subtitle, onClick }: any) => (
-  <button onClick={onClick} className="bg-white py-8 flex flex-col items-center justify-center gap-3 hover:bg-gray-50 active:bg-gray-100 transition-colors">
-    <div className="p-3 bg-gray-50 rounded-inner text-gray-800">
+const ServiceBtn = ({ icon, title, subtitle, onClick, className }: any) => (
+  <button 
+    onClick={onClick} 
+    className={`bg-white py-10 flex flex-col items-center justify-center gap-4 hover:bg-gray-50 active:bg-gray-100 transition-all border-gray-100 ${className}`}
+  >
+    <div className="p-4 bg-gray-50/80 rounded-full text-slate-800 transition-transform group-hover:scale-110">
       {icon}
     </div>
     <div className="text-center">
-      <div className="font-black text-[14px] text-gray-900 tracking-tight">{title}</div>
-      <div className="text-[9px] text-gray-400 font-black uppercase tracking-wider mt-0.5">{subtitle}</div>
+      <div className="font-black text-[16px] text-slate-800 tracking-tight leading-none">{title}</div>
+      <div className="text-[10px] text-slate-400 font-black uppercase tracking-wider mt-2">{subtitle}</div>
     </div>
   </button>
 );
