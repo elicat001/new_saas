@@ -15,9 +15,21 @@ export enum OrderStatus {
   CANCELLED = 'CANCELLED'
 }
 
-/**
- * Merchant configuration interface defining theme and feature flags.
- */
+export interface StoreContext {
+  id: string;
+  name: string;
+  table_no?: string;
+  allow_order: boolean;
+  allow_pay: boolean;
+  address: string;
+  order_type_default: 'DINE_IN' | 'PICK_UP';
+  theme: {
+    primary: string;
+    secondary: string;
+  };
+}
+
+// Added missing MerchantConfig interface definition
 export interface MerchantConfig {
   id: string;
   name: string;
@@ -39,19 +51,8 @@ export interface MerchantConfig {
   };
 }
 
-export interface StoreContext {
-  id: string;
-  name: string;
-  table_no?: string;
-  allow_order: boolean;
-  address: string;
-  theme: {
-    primary: string;
-    secondary: string;
-  };
-}
-
 export interface CartItem {
+  cart_item_id: string;
   productId: string;
   name: string;
   price: number;
@@ -78,5 +79,6 @@ export interface Order {
   status: OrderStatus;
   totalAmount: number;
   items: CartItem[];
+  takeNo?: string;
   createdAt: string;
 }

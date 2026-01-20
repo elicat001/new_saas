@@ -1,64 +1,52 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Minus, MapPin, ShoppingCart, Loader2, X, AlertCircle } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, MapPin, AlertCircle, Loader2 } from 'lucide-react';
 import { StoreContext, CartItem, Product } from '../types';
 import { api } from '../api';
 
 interface MenuProps {
   store: StoreContext;
   cart: CartItem[];
-  onUpdateCart: (newCart: CartItem[]) => void;
+  onUpdateCart: (cart: CartItem[]) => void;
   onCheckout: () => void;
-  onScanAgain: () => void;
 }
 
-const Menu: React.FC<MenuProps> = ({ store, cart, onUpdateCart, onCheckout, onScanAgain }) => {
+const Menu: React.FC<MenuProps> = ({ store, cart, onUpdateCart, onCheckout }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [activeCategory, setActiveCategory] = useState('');
 
   useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        const data = await api.getMenu(store.id);
-        setProducts(data);
-        if (data.length > 0) setActiveCategory(data[0].category);
-      } finally {
-        setLoading(false);
-      }
+    const fetch = async () => {
+      const data = await api.getMenu(store.id);
+      setProducts(data);
+      if (data.length > 0) setActiveCategory(data[0].category);
+      setLoading(false);
     };
-    fetchMenu();
+    fetch();
   }, [store.id]);
 
-  const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
-  const totalPrice = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
+  const totalPrice = cart.reduce((s, i) => s + (i.price * i.quantity), 0);
 
-  const handleUpdateQuantity = (product: Product, delta: number) => {
+  const updateQty = (p: Product, delta: number) => {
     if (!store.allow_order) return;
-    const existing = cart.find(i => i.productId === product.id);
+    const existing = cart.find(i => i.productId === p.id);
     if (existing) {
-      const newQuantity = existing.quantity + delta;
-      if (newQuantity <= 0) {
-        onUpdateCart(cart.filter(i => i.productId !== product.id));
-      } else {
-        onUpdateCart(cart.map(i => i.productId === product.id ? { ...i, quantity: newQuantity } : i));
-      }
+      const next = existing.quantity + delta;
+      if (next <= 0) onUpdateCart(cart.filter(i => i.productId !== p.id));
+      else onUpdateCart(cart.map(i => i.productId === p.id ? { ...i, quantity: next } : i));
     } else if (delta > 0) {
       onUpdateCart([...cart, { 
-        productId: product.id, 
-        name: product.name, 
-        price: product.price, 
-        quantity: 1, 
-        image: product.image 
+        cart_item_id: Math.random().toString(), 
+        productId: p.id, name: p.name, price: p.price, quantity: 1, image: p.image 
       }]);
     }
   };
 
   if (loading) return (
-    <div className="flex flex-col h-full bg-white items-center justify-center">
-      <Loader2 className="animate-spin text-gray-200 mb-2" />
-      <span className="text-[10px] font-black text-gray-300 tracking-widest">加载菜单...</span>
+    <div className="h-full flex items-center justify-center bg-white">
+      <Loader2 className="animate-spin text-gray-200" />
     </div>
   );
 
@@ -66,58 +54,51 @@ const Menu: React.FC<MenuProps> = ({ store, cart, onUpdateCart, onCheckout, onSc
 
   return (
     <div className="flex flex-col h-full bg-white relative">
-      {/* Header */}
-      <div className="px-5 pt-14 pb-4 bg-white sticky top-0 z-40">
-        <div className="flex items-center justify-between mb-2">
-           <h1 className="text-xl font-black">{store.name}</h1>
-           <button onClick={onScanAgain} className="bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-[16px] text-[10px] font-black text-gray-400 active-scale">切换桌号</button>
+      <div className="px-5 pt-14 pb-4 bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-50">
+        <div className="flex items-center justify-between mb-1.5">
+          <h1 className="text-xl font-black">{store.name}</h1>
+          <div className="bg-emerald-50 text-emerald-600 text-[9px] px-2 py-0.5 rounded-full font-black">营业中</div>
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-gray-400 font-bold">
-          <MapPin size={12} className="text-brand" /> {store.table_no ? `桌号: ${store.table_no}` : '外带'}
-          {!store.allow_order && (
-            <span className="ml-2 text-red-500 flex items-center gap-1">
-              <AlertCircle size={12} /> 门店休息中
-            </span>
-          )}
+        <div className="flex items-center gap-1 text-[10px] text-gray-400 font-bold">
+          <MapPin size={12} className="text-brand" /> {store.table_no ? `桌号: ${store.table_no}` : store.address}
         </div>
+        {!store.allow_order && (
+          <div className="mt-3 bg-red-50 text-red-500 px-3 py-2 rounded-xl flex items-center gap-2 text-[11px] font-black">
+            <AlertCircle size={14} /> 门店休息中，暂不支持下单
+          </div>
+        )}
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-24 bg-gray-50 overflow-y-auto scrollbar-hide">
-          {categories.map(cat => (
-            <button key={cat} onClick={() => setActiveCategory(cat)} className={`w-full py-6 px-4 text-[12px] text-left leading-tight transition-all relative ${activeCategory === cat ? 'bg-white font-black text-black' : 'text-gray-400 font-bold'}`}>
-              {activeCategory === cat && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-black rounded-r-full"></div>}
-              {cat}
+        <div className="w-20 bg-gray-50 overflow-y-auto scrollbar-hide">
+          {categories.map(c => (
+            <button key={c} onClick={() => setActiveCategory(c)} className={`w-full py-6 px-3 text-[11px] text-left leading-tight transition-all relative ${activeCategory === c ? 'bg-white font-black' : 'text-gray-400 font-bold'}`}>
+              {activeCategory === c && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-black rounded-r-full" style={{ backgroundColor: store.theme.secondary }}></div>}
+              {c}
             </button>
           ))}
         </div>
-        <div className="flex-1 bg-white overflow-y-auto p-5 scrollbar-hide pb-40">
+        <div className="flex-1 overflow-y-auto p-5 scrollbar-hide pb-40">
           <div className="space-y-8">
-            {products.filter(p => p.category === activeCategory).map(product => {
-              const qty = cart.find(i => i.productId === product.id)?.quantity || 0;
+            {products.filter(p => p.category === activeCategory).map(p => {
+              const qty = cart.find(i => i.productId === p.id)?.quantity || 0;
               return (
-                <div key={product.id} className="flex gap-4">
-                  <img src={product.image} className="w-20 h-20 rounded-[20px] object-cover border border-gray-50" />
+                <div key={p.id} className="flex gap-4 group">
+                  <img src={p.image} className="w-20 h-20 rounded-[18px] object-cover border border-gray-100" />
                   <div className="flex-1 flex flex-col justify-between py-0.5">
                     <div>
-                      <h3 className="text-sm font-black text-gray-900">{product.name}</h3>
-                      <p className="text-[10px] text-gray-400 mt-1 line-clamp-1">{product.description}</p>
+                      <h3 className="text-[13px] font-black text-gray-900 leading-none">{p.name}</h3>
+                      <p className="text-[9px] text-gray-300 mt-1 line-clamp-1">{p.description}</p>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[15px] font-black">¥{product.price}</span>
-                      {store.allow_order ? (
-                        <div className="flex items-center gap-3">
-                          {qty > 0 && (
-                            <>
-                              <button onClick={() => handleUpdateQuantity(product, -1)} className="w-6 h-6 border border-gray-200 rounded-full flex items-center justify-center active-scale"><Minus size={14} /></button>
-                              <span className="text-xs font-black">{qty}</span>
-                            </>
-                          )}
-                          <button onClick={() => handleUpdateQuantity(product, 1)} className="w-6 h-6 bg-brand border border-[var(--brand-secondary)] rounded-full flex items-center justify-center active-scale"><Plus size={14} /></button>
-                        </div>
-                      ) : (
-                        <span className="text-[10px] text-gray-300 font-bold">暂停下单</span>
-                      )}
+                      <span className="text-base font-black">¥{p.price}</span>
+                      <div className="flex items-center gap-3">
+                        {qty > 0 && (
+                          <button onClick={() => updateQty(p, -1)} className="w-6 h-6 border border-gray-200 rounded-full flex items-center justify-center active-scale transition-colors"><Minus size={14} /></button>
+                        )}
+                        {qty > 0 && <span className="text-xs font-black">{qty}</span>}
+                        <button onClick={() => updateQty(p, 1)} disabled={!store.allow_order} className={`w-6 h-6 rounded-full flex items-center justify-center active-scale transition-all ${store.allow_order ? 'bg-brand border border-brand/50' : 'bg-gray-100 text-gray-300'}`} style={store.allow_order ? { backgroundColor: store.theme.primary } : {}}><Plus size={14} /></button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -127,25 +108,21 @@ const Menu: React.FC<MenuProps> = ({ store, cart, onUpdateCart, onCheckout, onSc
         </div>
       </div>
 
-      {/* Cart Bar */}
       {cartCount > 0 && (
-        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] bg-[#1a1a1a] h-16 rounded-full flex items-center shadow-2xl z-[100] animate-in slide-in-from-bottom duration-500">
-          <div className="flex-1 px-6 flex items-center gap-5">
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 w-[92%] max-w-[400px] bg-[#1a1a1a] h-16 rounded-full flex items-center shadow-2xl z-50 animate-in slide-in-from-bottom duration-500 overflow-hidden">
+          <div className="flex-1 px-8 flex items-center gap-4">
             <div className="relative">
-                <div className="bg-brand border border-[var(--brand-secondary)] p-3.5 rounded-full -mt-12 shadow-2xl active-scale"><ShoppingCart size={24} strokeWidth={2.5} /></div>
-                <span className="absolute -top-12 -right-2 bg-red-500 text-white text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-[#1a1a1a]">{cartCount}</span>
+              <div className="bg-brand border border-brand/20 p-3 rounded-full -mt-10 shadow-2xl active-scale" style={{ backgroundColor: store.theme.primary }}>
+                <ShoppingCart size={22} strokeWidth={2.5} />
+              </div>
+              <span className="absolute -top-10 -right-2 bg-red-500 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#1a1a1a]">{cartCount}</span>
             </div>
-            <div className="text-white">
-                <span className="text-xs font-black opacity-50 mr-1">¥</span>
-                <span className="text-xl font-black">{totalPrice.toFixed(2)}</span>
+            <div className="text-white flex flex-col">
+              <span className="text-[10px] font-black opacity-40 uppercase tracking-widest leading-none">Estimated</span>
+              <span className="text-lg font-black leading-none mt-1">¥{totalPrice.toFixed(2)}</span>
             </div>
           </div>
-          <button 
-            onClick={onCheckout}
-            className="bg-brand h-full px-12 rounded-r-full border-l border-[var(--brand-secondary)] font-black text-[13px] tracking-widest uppercase active-scale"
-          >
-            去结算
-          </button>
+          <button onClick={onCheckout} className="bg-brand h-full px-12 border-l border-white/10 font-black text-[13px] tracking-widest uppercase active-scale" style={{ backgroundColor: store.theme.primary }}>去结算</button>
         </div>
       )}
     </div>
