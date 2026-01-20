@@ -6,20 +6,29 @@ export enum TabType {
   PROFILE = 'PROFILE'
 }
 
-export interface ThemeConfig {
-  primary: string;
-  secondary: string;
-  borderRadius: string;
-  fontFamily?: string;
+export enum OrderStatus {
+  PENDING_PAY = 'PENDING_PAY',
+  PAID = 'PAID',
+  PREPARING = 'PREPARING',
+  READY = 'READY',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED'
 }
 
+/**
+ * Merchant configuration interface defining theme and feature flags.
+ */
 export interface MerchantConfig {
   id: string;
   name: string;
   slogan: string;
   logo: string;
   mascot: string;
-  theme: ThemeConfig;
+  theme: {
+    primary: string;
+    secondary: string;
+    borderRadius: string;
+  };
   features: {
     dineIn: boolean;
     pickup: boolean;
@@ -30,6 +39,27 @@ export interface MerchantConfig {
   };
 }
 
+export interface StoreContext {
+  id: string;
+  name: string;
+  table_no?: string;
+  allow_order: boolean;
+  address: string;
+  theme: {
+    primary: string;
+    secondary: string;
+  };
+}
+
+export interface CartItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  spec?: string;
+  image: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -38,6 +68,15 @@ export interface Product {
   image: string;
   description?: string;
   category: string;
-  // Added missing specs property for product variants/customization
   specs?: string[];
+}
+
+export interface Order {
+  id: string;
+  storeId: string;
+  storeName: string;
+  status: OrderStatus;
+  totalAmount: number;
+  items: CartItem[];
+  createdAt: string;
 }

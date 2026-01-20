@@ -1,7 +1,7 @@
 {
-  "name": "棠小一烘焙",
-  "description": "一个功能齐全且视觉精美的烘焙店点餐系统，包含首页、菜单、订单和会员中心，完美还原微信小程序界面设计。",
   "requestFramePermissions": [
     "camera"
-  ]
+  ],
+  "name": "",
+  "description": ""
 }

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { ChevronRight, Clock, Search, History, CheckCircle2, XCircle, AlertCircle, ShoppingBag } from 'lucide-react';
-import { MerchantConfig } from '../types';
+import { StoreContext } from '../types';
 
 const ORDERS_MOCK = [
   {
@@ -38,10 +38,11 @@ const ORDERS_MOCK = [
 
 interface OrdersProps {
   onSelectOrder: (id: string) => void;
-  merchant: MerchantConfig;
+  // Use store instead of merchant to match App.tsx usage
+  store: StoreContext;
 }
 
-const Orders: React.FC<OrdersProps> = ({ onSelectOrder, merchant }) => {
+const Orders: React.FC<OrdersProps> = ({ onSelectOrder, store }) => {
   const [activeTab, setActiveTab] = useState('点单');
   const [activeFilter, setActiveFilter] = useState('全部');
 

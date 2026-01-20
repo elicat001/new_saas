@@ -1,29 +1,31 @@
 
 import React from 'react';
 import { ChevronRight, FileText, User, MapPin, Settings, Layers } from 'lucide-react';
-import { MerchantConfig } from '../types';
+import { StoreContext, MerchantConfig } from '../types';
 
 interface ProfileProps {
   onOrders: () => void;
-  onUserInfo: () => void;
-  onAddresses: () => void;
-  onTopUp: () => void;
-  onCoupons: () => void;
-  onIntegralDetails: () => void;
-  merchant: MerchantConfig;
-  merchants: MerchantConfig[];
-  onSwitchMerchant: (m: MerchantConfig) => void;
+  // Made optional to resolve prop missing errors in App.tsx
+  onUserInfo?: () => void;
+  onAddresses?: () => void;
+  onTopUp?: () => void;
+  onCoupons?: () => void;
+  onIntegralDetails?: () => void;
+  // Rename merchant to store and use StoreContext
+  store: StoreContext;
+  merchants?: MerchantConfig[];
+  onSwitchMerchant?: (m: MerchantConfig) => void;
 }
 
 const Profile: React.FC<ProfileProps> = ({ 
-  onOrders, onUserInfo, onAddresses, onTopUp, onCoupons, onIntegralDetails, merchant, merchants, onSwitchMerchant 
+  onOrders, onUserInfo, onAddresses, onTopUp, onCoupons, onIntegralDetails, store, merchants, onSwitchMerchant 
 }) => {
   return (
     <div className="bg-[#F8F8F8] min-h-full pb-40">
-      <div className="bg-brand pt-24 pb-24 px-6 flex flex-col items-center relative overflow-hidden transition-all duration-500">
+      <div className="bg-brand pt-24 pb-24 px-6 flex flex-col items-center relative overflow-hidden transition-all duration-500" style={{ backgroundColor: store.theme.primary }}>
         <div className="absolute top-14 left-7 z-10">
            <h1 className="text-3xl font-black tracking-widest text-black">
-             {merchant.name}
+             {store.name}
              <sup className="text-[12px] font-black align-top ml-1">®</sup>
            </h1>
         </div>
@@ -55,19 +57,21 @@ const Profile: React.FC<ProfileProps> = ({
             <MenuItem icon={<MapPin size={20} />} title="我的地址" onClick={onAddresses} />
         </div>
 
-        <div className="bg-white p-8 border border-brand/20 shadow-soft rounded-main">
-            <div className="flex items-center gap-3 mb-6 text-brand">
-                <Layers size={20} />
-                <h3 className="text-sm font-black uppercase tracking-widest">SaaS 装修引擎 (API 驱动)</h3>
-            </div>
-            <div className="flex flex-wrap gap-3">
-                {merchants.map(m => (
-                    <button key={m.id} onClick={() => onSwitchMerchant(m)} className={`px-4 py-2.5 rounded-inner text-[10px] font-black transition-all border-2 ${merchant.id === m.id ? 'bg-brand text-black border-brand' : 'bg-white text-gray-400 border-gray-100'}`}>
-                        {m.name}
-                    </button>
-                ))}
-            </div>
-        </div>
+        {merchants && onSwitchMerchant && (
+          <div className="bg-white p-8 border border-brand/20 shadow-soft rounded-main">
+              <div className="flex items-center gap-3 mb-6 text-brand">
+                  <Layers size={20} />
+                  <h3 className="text-sm font-black uppercase tracking-widest">SaaS 装修引擎 (API 驱动)</h3>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                  {merchants.map(m => (
+                      <button key={m.id} onClick={() => onSwitchMerchant(m)} className={`px-4 py-2.5 rounded-inner text-[10px] font-black transition-all border-2 ${store.id === m.id ? 'bg-brand text-black border-brand' : 'bg-white text-gray-400 border-gray-100'}`}>
+                          {m.name}
+                      </button>
+                  ))}
+              </div>
+          </div>
+        )}
       </div>
     </div>
   );
