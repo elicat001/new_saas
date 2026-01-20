@@ -45,7 +45,9 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
   return (
     <div className="bg-[#F8F8F8] min-h-screen flex flex-col pb-40">
       <div className="bg-white px-5 pt-16 pb-4 flex items-center justify-between sticky top-0 z-50 border-b border-gray-50">
-        <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center active-scale"><ChevronLeft size={22} /></button>
+        <button onClick={onBack} className="w-10 h-10 bg-gray-50 border border-gray-200 rounded-[16px] hover:bg-gray-100 flex items-center justify-center active-scale transition-all">
+          <ChevronLeft size={22} />
+        </button>
         <span className="font-black text-lg tracking-tight">确认订单</span>
         <div className="w-10"></div>
       </div>
@@ -256,7 +258,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
                <span className="text-3xl font-black" style={{ color: merchant.theme.secondary }}>19.90</span>
             </div>
          </div>
-         <button onClick={handleConfirmOrder} className="px-14 py-5 rounded-[24px] font-black text-lg shadow-xl active-scale" style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}>
+         <button onClick={handleConfirmOrder} className="px-14 py-5 rounded-[24px] border border-[var(--brand-secondary)] font-black text-lg bg-brand shadow-xl active-scale transition-all" style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}>
             立即支付
          </button>
       </div>
@@ -320,10 +322,10 @@ const Checkout: React.FC<CheckoutProps> = ({ onBack, merchant }) => {
                  请在弹出的系统窗口中<br/>完成身份验证与支付确认。
               </p>
               <div className="flex flex-col items-center gap-6 w-full">
-                 <button onClick={() => setShowPaymentModal(false)} className="w-full bg-gray-50 py-4 rounded-2xl text-gray-400 font-black text-sm active:bg-gray-100 transition-colors">
+                 <button onClick={() => setShowPaymentModal(false)} className="w-full bg-gray-50 border border-gray-200 py-4 rounded-[16px] text-gray-400 hover:bg-gray-100 font-black text-sm active-scale transition-all">
                    支付遇到问题？
                  </button>
-                 <button onClick={() => setShowPaymentModal(false)} className="text-red-400 font-black tracking-widest uppercase text-xs active:opacity-60 transition-opacity">
+                 <button onClick={() => setShowPaymentModal(false)} className="text-red-400 font-black tracking-widest uppercase text-xs active-scale transition-opacity">
                    取消支付
                  </button>
               </div>

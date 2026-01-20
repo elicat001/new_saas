@@ -1,16 +1,13 @@
 
 import React, { useState, useRef } from 'react';
 import { ChevronLeft, Camera, Check, Loader2, X, RotateCw } from 'lucide-react';
-// Added MerchantConfig import
 import { MerchantConfig } from '../types';
 
 interface UserInfoProps {
   onBack: () => void;
-  // Added merchant prop
   merchant: MerchantConfig;
 }
 
-// Updated component signature to accept merchant prop
 const UserInfo: React.FC<UserInfoProps> = ({ onBack, merchant }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
@@ -72,15 +69,15 @@ const UserInfo: React.FC<UserInfoProps> = ({ onBack, merchant }) => {
 
   return (
     <div className="bg-[#F8F8F8] min-h-screen flex flex-col pb-10 relative">
-      {/* Header */}
       <div className="bg-white px-5 pt-16 pb-4 flex items-center justify-between sticky top-0 z-50 border-b border-gray-50">
-        <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center active-scale"><ChevronLeft size={22} /></button>
+        <button onClick={onBack} className="w-10 h-10 bg-gray-50 border border-gray-200 rounded-[16px] hover:bg-gray-100 flex items-center justify-center active-scale transition-all">
+          <ChevronLeft size={22} />
+        </button>
         <span className="font-black text-lg tracking-tight text-black">个人信息</span>
         <div className="w-10"></div>
       </div>
 
       <div className="flex-1 flex flex-col p-6">
-        {/* Avatar Section */}
         <div className="flex flex-col items-center mt-8 mb-12">
             <div className="relative active-scale" onClick={startCamera}>
                 <div className="w-28 h-28 rounded-full bg-white border-[6px] border-white shadow-xl overflow-hidden">
@@ -93,7 +90,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ onBack, merchant }) => {
             <div className="mt-6 text-[10px] text-gray-300 font-black tracking-[0.2em] uppercase">Member ID: 88120410</div>
         </div>
 
-        {/* Info Form */}
         <div className="bg-white rounded-[40px] shadow-soft overflow-hidden mb-6">
             <InfoItem label="昵称" value={formData.nickname} />
             
@@ -104,7 +100,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ onBack, merchant }) => {
                       <button 
                         key={g}
                         onClick={() => setFormData({...formData, gender: g})}
-                        className={`px-6 py-2 rounded-full text-xs font-black transition-all ${formData.gender === g ? 'text-black shadow-md' : 'bg-gray-50 text-gray-300'}`}
+                        className={`px-6 py-2 rounded-full text-xs font-black transition-all ${formData.gender === g ? 'text-black shadow-md' : 'bg-gray-50 border border-gray-200 hover:bg-gray-100 text-gray-300'}`}
                         style={formData.gender === g ? { backgroundColor: merchant.theme.primary } : {}}
                       >
                         {g}
@@ -138,14 +134,13 @@ const UserInfo: React.FC<UserInfoProps> = ({ onBack, merchant }) => {
         <button 
           onClick={handleSave}
           disabled={isSaving}
-          className="w-full py-6 rounded-[28px] font-black text-lg shadow-xl active-scale flex items-center justify-center gap-3"
+          className="w-full py-6 rounded-[24px] border border-[var(--brand-secondary)] font-black text-lg bg-brand text-black shadow-xl active-scale flex items-center justify-center gap-3 transition-all"
           style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}
         >
             {isSaving ? <Loader2 size={24} className="animate-spin" /> : '保存修改'}
         </button>
       </div>
 
-      {/* Camera Overlay */}
       {showCamera && (
         <div className="fixed inset-0 bg-black z-[200] flex flex-col items-center justify-between py-20 animate-in fade-in duration-300">
           <div className="w-full px-6 flex justify-between items-center text-white">
@@ -188,7 +183,7 @@ const InfoItem = ({ label, value, canChange }: any) => (
       <span className="text-[13px] font-black text-gray-400 uppercase tracking-wider">{label}</span>
       <div className="flex items-center gap-3">
           <span className="text-sm font-black text-black">{value}</span>
-          {canChange && <button className="text-[9px] bg-gray-100 px-2.5 py-1 rounded-lg font-black text-gray-400 border border-gray-200">更换</button>}
+          {canChange && <button className="text-[9px] bg-gray-50 border border-gray-200 hover:bg-gray-100 px-2.5 py-1 rounded-lg font-black text-gray-400 active-scale transition-all">更换</button>}
       </div>
   </div>
 );

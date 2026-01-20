@@ -1,16 +1,13 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, MapPin, Plus, Trash2, Edit2, Navigation } from 'lucide-react';
-// Added MerchantConfig import
 import { MerchantConfig } from '../types';
 
 interface AddressesProps {
   onBack: () => void;
-  // Added merchant prop
   merchant: MerchantConfig;
 }
 
-// Updated component signature to accept merchant prop
 const Addresses: React.FC<AddressesProps> = ({ onBack, merchant }) => {
   const [activeTab, setActiveTab] = useState<'LOCAL' | 'EXPRESS'>('LOCAL');
   const [addresses, setAddresses] = useState([
@@ -19,14 +16,14 @@ const Addresses: React.FC<AddressesProps> = ({ onBack, merchant }) => {
 
   return (
     <div className="bg-[#F8F8F8] min-h-screen flex flex-col pb-32">
-      {/* Header */}
       <div className="bg-white px-5 pt-16 pb-4 flex items-center justify-between sticky top-0 z-50 border-b border-gray-50">
-        <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center active-scale"><ChevronLeft size={22} /></button>
+        <button onClick={onBack} className="w-10 h-10 bg-gray-50 border border-gray-200 rounded-[16px] hover:bg-gray-100 flex items-center justify-center active-scale transition-all">
+          <ChevronLeft size={22} />
+        </button>
         <span className="font-black text-lg tracking-tight text-black">我的地址</span>
         <div className="w-10"></div>
       </div>
 
-      {/* Tabs */}
       <div className="px-5 py-6">
          <div className="bg-gray-200/50 flex rounded-[24px] p-1.5 backdrop-blur-md">
             <button 
@@ -45,7 +42,6 @@ const Addresses: React.FC<AddressesProps> = ({ onBack, merchant }) => {
          </div>
       </div>
 
-      {/* List */}
       <div className="flex-1 px-5 space-y-4">
         {addresses.length > 0 ? (
           addresses.map(addr => (
@@ -56,8 +52,8 @@ const Addresses: React.FC<AddressesProps> = ({ onBack, merchant }) => {
                      {addr.tag && <span className="bg-gray-100 text-gray-400 text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider">{addr.tag}</span>}
                   </div>
                   <div className="flex gap-4">
-                     <button className="text-gray-200 hover:text-gray-400 transition-colors"><Edit2 size={16} /></button>
-                     <button className="text-gray-200 hover:text-red-400 transition-colors"><Trash2 size={16} /></button>
+                     <button className="text-gray-200 hover:text-gray-400 transition-colors active-scale"><Edit2 size={16} /></button>
+                     <button className="text-gray-200 hover:text-red-400 transition-colors active-scale"><Trash2 size={16} /></button>
                   </div>
                </div>
                
@@ -69,7 +65,7 @@ const Addresses: React.FC<AddressesProps> = ({ onBack, merchant }) => {
                   {addr.city} {addr.detail}
                </div>
 
-               <button className="w-full flex items-center justify-center gap-2 py-4 bg-gray-50 rounded-2xl text-[10px] font-black text-gray-400 hover:bg-gray-100 transition-colors uppercase tracking-widest">
+               <button className="w-full flex items-center justify-center gap-2 py-4 bg-gray-50 border border-gray-200 rounded-[16px] text-[10px] font-black text-gray-400 hover:bg-gray-100 transition-all uppercase tracking-widest active-scale">
                   <Navigation size={14} />
                   Navigate to this address
                </button>
@@ -83,9 +79,8 @@ const Addresses: React.FC<AddressesProps> = ({ onBack, merchant }) => {
         )}
       </div>
 
-      {/* Footer Action */}
       <div className="fixed bottom-0 inset-x-0 p-6 bg-white shadow-up pb-10">
-        <button className="w-full py-6 rounded-[28px] font-black text-lg shadow-xl active-scale flex items-center justify-center gap-3" style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}>
+        <button className="w-full py-6 rounded-[24px] border border-[var(--brand-secondary)] font-black text-lg bg-brand text-black shadow-xl active-scale flex items-center justify-center gap-3 transition-all" style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}>
             <Plus size={24} strokeWidth={3} />
             新增收货地址
         </button>

@@ -59,7 +59,6 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
     if (selectedProduct) {
       setIsAdding(true);
       
-      // SaaS: Simulate network latency for a better UX feedback loop
       setTimeout(() => {
         setCart(prev => {
           const existingIndex = prev.findIndex(item => 
@@ -96,7 +95,9 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
             <Users size={16} />
             <span className="text-[11px] font-black uppercase tracking-wider">拼单</span>
           </button>
-          <div className="bg-gray-50 p-3 rounded-full text-gray-400 active-scale"><Search size={20} strokeWidth={2.5} /></div>
+          <div className="bg-gray-50 p-3 rounded-[16px] border border-gray-200 hover:bg-gray-100 text-gray-400 active-scale transition-colors">
+            <Search size={20} strokeWidth={2.5} />
+          </div>
         </div>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-1.5 active-scale">
@@ -144,7 +145,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
                         <span className="text-lg font-black text-black leading-none">¥{product.price}</span>
                         {product.vipPrice && <span className="text-[10px] font-black text-brand mt-1">¥{product.vipPrice}</span>}
                     </div>
-                    <button className="bg-brand px-4 py-2.5 rounded-full text-[10px] font-black tracking-wider shadow-sm active-scale">选规格</button>
+                    <button className="bg-brand px-4 py-2.5 rounded-[24px] border border-[var(--brand-secondary)] text-[10px] font-black tracking-wider shadow-sm active-scale transition-all">选规格</button>
                   </div>
                 </div>
               </div>
@@ -167,7 +168,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
                 </div>
             </div>
           </div>
-          <button onClick={onCheckout} className="bg-brand h-full px-12 rounded-r-full font-black text-[13px] text-black tracking-widest uppercase">结算</button>
+          <button onClick={onCheckout} className="bg-brand h-full px-12 rounded-r-full border-l border-[var(--brand-secondary)] font-black text-[13px] text-black tracking-widest uppercase active-scale transition-all">结算</button>
         </div>
       )}
 
@@ -201,7 +202,7 @@ const Menu: React.FC<MenuProps> = ({ onCheckout, merchant }) => {
               <button 
                 onClick={addToCart} 
                 disabled={isAdding}
-                className="w-full bg-brand py-5 rounded-inner font-black text-lg uppercase tracking-widest shadow-xl shadow-brand-yellow/30 active-scale flex items-center justify-center gap-3 disabled:opacity-80 transition-all"
+                className="w-full bg-brand py-5 rounded-[24px] border border-[var(--brand-secondary)] font-black text-lg uppercase tracking-widest shadow-xl shadow-brand-yellow/30 active-scale flex items-center justify-center gap-3 disabled:opacity-80 transition-all"
               >
                 {isAdding ? (
                   <>

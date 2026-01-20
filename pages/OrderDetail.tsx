@@ -13,7 +13,6 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
   const [isCancelled, setIsCancelled] = useState(false); 
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   
-  // SaaS: Track the current step of the order (0: Placed, 1: Preparing, 2: Ready, 3: Completed)
   const [currentStep] = useState(1);
 
   const steps = [
@@ -30,16 +29,14 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
 
   return (
     <div className="bg-[#F8F8F8] min-h-full flex flex-col pb-40 relative">
-      {/* Header */}
       <div className="bg-white px-5 pt-16 pb-4 flex items-center justify-between sticky top-0 z-50 border-b border-gray-50">
-        <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center active-scale transition-transform">
+        <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-[16px] border border-gray-200 hover:bg-gray-100 flex items-center justify-center active-scale transition-all">
           <ChevronLeft size={22} />
         </button>
         <span className="font-black text-lg tracking-tight">订单详情</span>
         <div className="w-10"></div>
       </div>
 
-      {/* Enhanced Status Section with Progress Tracker */}
       <div className="bg-white px-6 py-10 mb-4 shadow-sm">
         {isCancelled ? (
           <div className="flex flex-col items-center py-4">
@@ -61,11 +58,8 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
                </div>
             </div>
 
-            {/* Stepper Implementation */}
             <div className="flex items-start justify-between relative px-2">
-              {/* Connecting Background Line */}
               <div className="absolute top-4 left-6 right-6 h-[2px] bg-gray-100 -z-0"></div>
-              {/* Active Progress Line */}
               <div 
                 className="absolute top-4 left-6 h-[2px] bg-brand -z-0 transition-all duration-1000 ease-out"
                 style={{ width: `${(currentStep / (steps.length - 1)) * 88}%` }}
@@ -99,7 +93,6 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
         )}
       </div>
 
-      {/* Order Main Card */}
       <div className="px-5 mb-4">
         <div className="bg-white rounded-[32px] overflow-hidden shadow-sm border border-gray-50">
           <div className="p-6 border-b border-gray-50 flex justify-between items-center">
@@ -140,7 +133,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
                <span className="text-3xl font-black text-black">¥2445.00</span>
             </div>
 
-            <button className="w-full flex items-center justify-center gap-2 py-4 border border-gray-100 rounded-2xl text-xs font-black text-gray-400 active:bg-gray-50 transition-colors">
+            <button className="w-full flex items-center justify-center gap-2 py-4 border border-gray-100 rounded-[16px] text-xs font-black text-gray-400 hover:bg-gray-50 transition-colors active-scale">
                <Headset size={18} />
                联系门店客服
             </button>
@@ -148,7 +141,6 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
         </div>
       </div>
 
-      {/* Info Card */}
       <div className="px-5 mb-32">
         <div className="bg-white rounded-[32px] p-8 space-y-6 shadow-sm border border-gray-50">
           <h4 className="text-[10px] font-black text-gray-300 uppercase tracking-widest border-b border-gray-50 pb-3">订单信息</h4>
@@ -167,18 +159,17 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
         </div>
       </div>
 
-      {/* Footer Buttons */}
       <div className="fixed bottom-0 inset-x-0 p-6 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex gap-4 z-50 pb-10">
         {!isCancelled ? (
           <>
             <button 
               onClick={() => setShowCancelConfirm(true)}
-              className="px-6 py-5 rounded-[24px] font-black text-xs text-red-500 border border-red-100 bg-red-50/50 active:bg-red-50 transition-colors tracking-widest uppercase"
+              className="px-6 py-5 rounded-[24px] font-black text-xs text-red-500 border border-red-100 bg-red-50/50 active-scale transition-all tracking-widest uppercase hover:bg-red-50"
             >
               取消订单
             </button>
             <button 
-              className="flex-1 py-5 rounded-[24px] font-black text-lg bg-brand text-black shadow-xl shadow-brand-yellow/30 active:scale-95 flex items-center justify-center gap-2 transition-all"
+              className="flex-1 py-5 rounded-[24px] border border-[var(--brand-secondary)] font-black text-lg bg-brand text-black shadow-xl shadow-brand-yellow/30 active-scale flex items-center justify-center gap-2 transition-all"
               style={{ backgroundColor: merchant.theme.primary }}
             >
               <RefreshCw size={18} />
@@ -189,12 +180,12 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
           <>
             <button 
               onClick={onBack} 
-              className="flex-1 bg-gray-100 py-5 rounded-[24px] font-black text-gray-400 active:bg-gray-200 transition-colors"
+              className="flex-1 bg-gray-50 border border-gray-200 py-5 rounded-[16px] font-black text-gray-400 hover:bg-gray-100 active-scale transition-all"
             >
               返回首页
             </button>
             <button 
-              className="flex-1 py-5 rounded-[24px] font-black text-lg bg-brand text-black shadow-xl shadow-brand-yellow/30 active:scale-95 flex items-center justify-center gap-2 transition-all"
+              className="flex-1 py-5 rounded-[24px] border border-[var(--brand-secondary)] font-black text-lg bg-brand text-black shadow-xl shadow-brand-yellow/30 active-scale flex items-center justify-center gap-2 transition-all"
               style={{ backgroundColor: merchant.theme.primary }}
             >
               <RefreshCw size={18} />
@@ -204,7 +195,6 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
         )}
       </div>
 
-      {/* Cancellation Confirmation Modal */}
       {showCancelConfirm && (
         <div className="fixed inset-0 bg-black/70 z-[600] flex items-center justify-center p-8 backdrop-blur-md animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-[340px] rounded-[48px] p-10 flex flex-col items-center relative animate-in zoom-in-95 duration-300 shadow-2xl">
@@ -224,13 +214,13 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ onBack, orderId, merchant }) 
             <div className="flex flex-col gap-4 w-full">
                <button 
                  onClick={handleCancelOrder}
-                 className="w-full bg-black py-5 rounded-[24px] text-white font-black text-sm active:scale-95 transition-all shadow-lg"
+                 className="w-full bg-black py-5 rounded-[24px] text-white font-black text-sm active-scale transition-all shadow-lg"
                >
                  确定取消
                </button>
                <button 
                  onClick={() => setShowCancelConfirm(false)}
-                 className="w-full py-4 rounded-[24px] text-gray-300 font-black text-xs tracking-widest uppercase hover:text-gray-500 transition-colors"
+                 className="w-full py-4 rounded-[24px] text-gray-300 font-black text-xs tracking-widest uppercase hover:text-gray-500 transition-colors active-scale"
                >
                  我再想想
                </button>

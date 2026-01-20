@@ -1,16 +1,13 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Check, Wallet, Info } from 'lucide-react';
-// Added MerchantConfig import
 import { MerchantConfig } from '../types';
 
 interface TopUpProps {
   onBack: () => void;
-  // Added merchant prop
   merchant: MerchantConfig;
 }
 
-// Updated component signature to accept merchant prop
 const TopUp: React.FC<TopUpProps> = ({ onBack, merchant }) => {
   const [selectedAmount, setSelectedAmount] = useState(10);
   const [agreed, setAgreed] = useState(false);
@@ -24,9 +21,10 @@ const TopUp: React.FC<TopUpProps> = ({ onBack, merchant }) => {
 
   return (
     <div className="bg-[#F8F8F8] min-h-screen flex flex-col pb-10">
-      {/* Header */}
       <div className="bg-white px-5 pt-16 pb-4 flex items-center justify-between sticky top-0 z-50 border-b border-gray-50">
-        <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center active-scale"><ChevronLeft size={22} /></button>
+        <button onClick={onBack} className="w-10 h-10 bg-gray-50 border border-gray-200 rounded-[16px] hover:bg-gray-100 flex items-center justify-center active-scale transition-all">
+          <ChevronLeft size={22} />
+        </button>
         <span className="font-black text-lg tracking-tight text-black">充值余额</span>
         <div className="w-10"></div>
       </div>
@@ -88,7 +86,7 @@ const TopUp: React.FC<TopUpProps> = ({ onBack, merchant }) => {
 
         <button 
           disabled={!agreed}
-          className={`w-full py-6 rounded-[28px] font-black text-lg shadow-xl transition-all active-scale mb-10 ${agreed ? 'text-black' : 'bg-gray-100 text-gray-300 shadow-none cursor-not-allowed'}`}
+          className={`w-full py-6 rounded-[24px] border font-black text-lg shadow-xl transition-all active-scale mb-10 ${agreed ? 'bg-brand text-black border-[var(--brand-secondary)]' : 'bg-gray-100 text-gray-300 border-gray-200 shadow-none cursor-not-allowed'}`}
           style={agreed ? { backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` } : {}}
         >
             立即支付 ¥{selectedAmount.toFixed(2)}

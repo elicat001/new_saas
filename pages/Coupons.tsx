@@ -1,16 +1,13 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, Info, X, Tag, Ticket } from 'lucide-react';
-// Added MerchantConfig import
 import { MerchantConfig } from '../types';
 
 interface CouponsProps {
   onBack: () => void;
-  // Added merchant prop
   merchant: MerchantConfig;
 }
 
-// Updated component signature to accept merchant prop
 const Coupons: React.FC<CouponsProps> = ({ onBack, merchant }) => {
   const [activeTab, setActiveTab] = useState('可使用');
   const [showExchange, setShowExchange] = useState(false);
@@ -22,14 +19,14 @@ const Coupons: React.FC<CouponsProps> = ({ onBack, merchant }) => {
 
   return (
     <div className="bg-[#F8F8F8] min-h-screen flex flex-col pb-32">
-      {/* Header */}
       <div className="bg-white px-5 pt-16 pb-4 flex items-center justify-between sticky top-0 z-50 border-b border-gray-50">
-        <button onClick={onBack} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center active-scale"><ChevronLeft size={22} /></button>
+        <button onClick={onBack} className="w-10 h-10 bg-gray-50 border border-gray-200 rounded-[16px] hover:bg-gray-100 flex items-center justify-center active-scale transition-all">
+          <ChevronLeft size={22} />
+        </button>
         <span className="font-black text-lg tracking-tight text-black">我的券包</span>
         <button onClick={() => setShowExchange(true)} className="text-xs font-black px-4 py-2 rounded-full active-scale" style={{ backgroundColor: `${merchant.theme.primary}1A`, color: merchant.theme.secondary }}>兑换码</button>
       </div>
 
-      {/* Tabs */}
       <div className="bg-white px-5 py-6 mb-4 shadow-sm">
          <div className="flex justify-around items-center">
             {['可使用', '已使用', '已过期'].map(t => (
@@ -45,7 +42,6 @@ const Coupons: React.FC<CouponsProps> = ({ onBack, merchant }) => {
          </div>
       </div>
 
-      {/* List */}
       <div className="flex-1 px-5 space-y-4">
         {activeTab === '可使用' ? (
           MOCK_COUPONS.map(coupon => (
@@ -53,7 +49,6 @@ const Coupons: React.FC<CouponsProps> = ({ onBack, merchant }) => {
                <div className="w-32 bg-[#1a1a1a] flex flex-col items-center justify-center p-6 relative" style={{ color: merchant.theme.primary }}>
                   <div className="text-2xl font-black">{coupon.amount}<span className="text-xs ml-0.5">{typeof coupon.amount === 'number' ? '元' : ''}</span></div>
                   <div className="text-[9px] font-bold opacity-60 mt-2 uppercase tracking-widest">{coupon.condition}</div>
-                  {/* Decorative circles for ticket look */}
                   <div className="absolute top-1/2 -left-3 w-6 h-6 bg-[#F8F8F8] rounded-full -translate-y-1/2"></div>
                   <div className="absolute top-1/2 -right-3 w-6 h-6 bg-[#F8F8F8] rounded-full -translate-y-1/2 z-10"></div>
                </div>
@@ -67,7 +62,7 @@ const Coupons: React.FC<CouponsProps> = ({ onBack, merchant }) => {
                        有效期至 {coupon.expire}
                     </p>
                   </div>
-                  <button className="self-end text-[10px] font-black text-black border border-gray-100 px-5 py-2 rounded-full hover:bg-gray-50 transition-colors">
+                  <button className="self-end text-[10px] font-black text-black border border-gray-100 px-5 py-2 rounded-full hover:bg-gray-50 transition-colors active-scale">
                      立即使用
                   </button>
                </div>
@@ -81,7 +76,6 @@ const Coupons: React.FC<CouponsProps> = ({ onBack, merchant }) => {
         )}
       </div>
 
-      {/* Exchange Modal */}
       {showExchange && (
         <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-8 backdrop-blur-md">
            <div className="bg-white w-full max-sm rounded-[48px] p-10 flex flex-col items-center relative animate-in zoom-in-95 duration-300">
@@ -101,8 +95,8 @@ const Coupons: React.FC<CouponsProps> = ({ onBack, merchant }) => {
                 onBlur={(e) => e.target.style.borderColor = 'transparent'}
               />
               
-              <button className="w-full py-5 rounded-[24px] font-black shadow-xl active-scale uppercase tracking-widest" style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}>
-                Redeem Now
+              <button className="w-full py-5 rounded-[24px] border border-[var(--brand-secondary)] bg-brand font-black shadow-xl active-scale transition-all uppercase tracking-widest" style={{ backgroundColor: merchant.theme.primary, boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}>
+                立即兑换
               </button>
            </div>
         </div>

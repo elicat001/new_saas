@@ -40,7 +40,6 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode, merchant }) => {
     setIsScanning(false);
   };
 
-  // Logic to determine grid columns based on enabled features
   const enabledFeatures = [
     { id: 'dineIn', icon: <HomeIcon size={24} />, title: "堂食", subtitle: "DINE IN", enabled: merchant.features.dineIn },
     { id: 'pickup', icon: <User size={24} />, title: "自取", subtitle: "PICK UP", enabled: merchant.features.pickup },
@@ -97,7 +96,7 @@ const Home: React.FC<HomeProps> = ({ onMenu, onMemberCode, merchant }) => {
 
           <button 
             onClick={startScan}
-            className="w-full bg-brand mb-8 py-5 rounded-inner flex items-center justify-center gap-5 shadow-xl shadow-brand-yellow/30 active-scale group"
+            className="w-full bg-brand mb-8 py-5 rounded-[24px] border border-[var(--brand-secondary)] flex items-center justify-center gap-5 shadow-xl shadow-brand-yellow/30 active-scale group transition-all"
             style={{ boxShadow: `0 15px 30px -5px ${merchant.theme.primary}40` }}
           >
             <div className="bg-white/40 p-3 rounded-inner group-hover:rotate-12 transition-transform">
