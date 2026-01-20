@@ -1,88 +1,89 @@
 # 棠小一烘焙 (Tang Xiao Yi) · SaaS Digital Dining Engine
 
 [![React](https://img.shields.io/badge/React-19.0-61DAFB.svg?style=flat-square&logo=react)](https://react.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC.svg?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6.svg?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![SaaS](https://img.shields.io/badge/Architecture-SaaS--Ready-00C7B7.svg?style=flat-square)](#)
-[![Design](https://img.shields.io/badge/UI/UX-High--Fidelity-FFD700.svg?style=flat-square)](#)
 
-A world-class, 1:1 commercial-grade SaaS ordering solution for the modern F&B industry. This project transcends a simple template; it is a **universal frontend engine** designed for multi-tenant scalability, high-fidelity interaction, and deep hardware integration.
-
----
-
-## 💎 Design Philosophy: "Physicality & Precision"
-
-The UI is engineered to bridge the gap between web and native applications, following the **"Apple-esque"** aesthetic principles:
-
-- **Dynamic Theming**: All components utilize CSS Custom Properties (Variables) injected via the SaaS configuration layer, enabling instant brand switching (e.g., `#f7e28b` for Bakery, `#2D5A27` for Coffee).
-- **Tactile Feedback**: Every interactive element features the `active-scale` micro-animation, providing users with instant physical confirmation of their input.
-- **Organic Geometry**: Utilizing large-radius containers (`48px`) and multi-layered soft shadows (`shadow-soft`) to create a floating, modern card-based interface.
-- **Typography as Identity**: High-contrast font weights (`font-black`) paired with wide letter spacing (`tracking-widest`) establish a premium, luxury brand voice.
+这是一个高保真、商业级的 **To-C 扫码点餐系统 V1** 解决方案。本项目采用 SaaS 架构设计，支持多门店动态配置、扫码上下文识别、微信支付闭环及实时订单追踪。
 
 ---
 
-## 🚀 SaaS Core Capabilities
+## 💎 设计理念：物理感与精准度
 
-### 1. Multi-Tenant Architecture
-- **Tenant Context Isolation**: The system resolves `store_context` via a `scene_code` (QR scan), automatically re-skinning the entire UI and mapping API endpoints to specific merchant IDs.
-- **Cart Namespace Protection**: Shopping carts are persisted locally using merchant-specific namespaces (`cart_{merchant_id}`), preventing cross-store data leakage.
+本系统的 UI 设计旨在缩小 Web 与原生小程序的体验差距，遵循 **"Apple-esque"** 美学原则：
 
-### 2. Business Logic Versatility
-- **Hybrid Service Modes**: Supports "Dine-in (Table Scan)", "Self-Pickup", "Local Delivery", and "Express Shipping" within a single codebase.
-- **Store-State Intelligence**: Real-time checking of store operational status (`OPEN`, `REST`, `CLOSED`) with automatic UI fallback (disabling checkout, displaying banners).
-
----
-
-## ✨ Features & Modules
-
-### 🛒 High-Precision Ordering
-- **Smooth Navigation**: Categorized menu with sticky headers and scroll-sync.
-- **Specification Engine**: Simulated support for complex SKU options (Size, Temp, Sugar).
-- **Smart Checkout**: Fee calculation logic with support for VIP pricing and merchant-specific discounts.
-
-### 💳 Transactional Integrity
-- **Mock Payment Flow**: Simulated `wx.requestPayment` integration with JSAPI logic.
-- **Order Tracking**: Real-time status polling using **Exponential Backoff** (1s -> 2s -> 4s -> 5s) to sync payment results efficiently.
-- **取餐号 (Take-No) System**: Automated generation of digital queue numbers for offline pickup.
-
-### 👤 Advanced Membership System
-- **Dynamic QR Identity**: A membership code center that auto-refreshes every 60 seconds to prevent unauthorized scanning.
-- **Hardware Integration**: Built-in support for **Camera Access** to capture user avatars directly within the app.
-- **Wallet & Points**: Full lifecycle management of user balance, integral points, and digital coupons with high-fidelity ticket aesthetics.
+- **动态主题注入**：所有组件通过 SaaS 配置层注入 CSS 变量（`--brand-primary` 等），实现秒级换肤。
+- **触觉反馈**：核心交互元素集成 `active-scale` 微动效，提供真实的物理反馈。
+- **有机几何学**：采用 `48px` 大圆角容器与 `shadow-soft` 多层软阴影，构建漂浮感界面。
+- **门店状态感知**：实时识别门店 `OPEN/REST/CLOSED` 状态，自动降级 UI 交互。
 
 ---
 
-## 📂 Engineering Structure
+## 🚀 核心业务流程 (To-C V1)
+
+### 1. 扫码上下文 (Store Context)
+系统启动后通过 `scene_code` 解析门店与桌号信息：
+- **STORE 码**：默认开启“到店自取”模式。
+- **TABLE 码**：自动绑定桌号，开启“堂食”模式。
+- **门店隔离**：购物车数据按 `store_id` 进行命名空间隔离，防止跨店数据干扰。
+
+### 2. 点单与加购
+- **高效分类导航**：左侧分类滚动同步，右侧商品流式布局。
+- **购物车算价**：前端实时计算，后端接口二次校验。
+
+### 3. 支付与交付闭环
+- **模拟 JSAPI 支付**：集成微信支付弹窗模拟流程。
+- **指数退避轮询**：支付后自动启动订单状态同步（1s -> 2s -> 4s -> 5s），确保最终一致性。
+- **取餐号系统**：支付成功后自动分发 B/C 头的数字取餐凭证。
+
+---
+
+## 📂 工程结构
 
 ```text
-├── App.tsx             # Universal Router & SaaS Global Layout
-├── api.ts              # Abstracted Service Layer with Mock Latency
-├── types.ts            # Type-Safe Entity Definitions (Merchants, Orders)
-├── config.ts           # Centralized SaaS Tenant Mock Data
+├── App.tsx             # 全局路由与 SaaS 上下文管理
+├── api.ts              # 抽象 Service 层（适配微信小程序/Web）
+├── main.py             # FastAPI 后端服务（数据持久化与业务逻辑）
+├── types.ts            # 类型定义（MerchantConfig, OrderStatus, etc.）
+├── config.ts           # 静态 SaaS 租户 Mock 配置
 ├── pages/
-│   ├── Menu.tsx        # High-Performance Catalog & Cart Logic
-│   ├── Entry.tsx       # QR Scene Resolution Entry Point
-│   ├── MemberCode.tsx  # Dynamic Security Code Generator
-│   ├── TopUp.tsx       # Financial Marketing Loop (Balance Recharge)
-│   └── ...             # Extended Business Modules (Address, UserInfo)
+│   ├── Entry.tsx       # 扫码入口解析页
+│   ├── Menu.tsx        # 核心菜单与购物车浮层
+│   ├── Checkout.tsx    # 订单确认与支付发起
+│   ├── OrderDetail.tsx # 实时状态追踪与取餐号展示
+│   ├── MemberCode.tsx  # 动态会员权益码（60s 自动刷新）
+│   └── UserInfo.tsx    # 硬件集成：原生相机调用更新头像
 ```
 
 ---
 
-## 🛠 Tech Stack
+## 🛠 技术实现细节
 
-- **React 19**: Leveraging the latest concurrent features and hooks for state management.
-- **Tailwind CSS**: The backbone of our SaaS dynamic styling engine.
-- **Lucide React**: Crisp, pixel-perfect vector icons for the entire F&B journey.
-- **Local Storage API**: Used as a local database to simulate persistent server-side state.
+- **小程序级状态管理**：采用持久化存储模拟小程序 `wx.setStorageSync` 逻辑，确保冷启动状态不丢失。
+- **硬件集成**：在 `UserInfo` 页面通过 `getUserMedia` 实现高保真拍照取景器。
+- **支付安全性**：在 `Checkout` 页面模拟支付环境加密保护提示，提升用户信任感。
+- **轮询策略**：`OrderDetail` 内置自动状态同步引擎，处理支付回调延迟。
 
 ---
 
-## 🎯 Our Vision
+## 📡 API 契约说明
 
-> "Build for the scale of SaaS, design for the soul of the Brand."
+| 路径 | 方法 | 说明 |
+| :--- | :--- | :--- |
+| `/api/merchants` | GET | 获取所有 SaaS 租户配置 |
+| `/api/context/resolve` | GET | 解析扫码 Scene 码获取门店上下文 |
+| `/api/merchants/{id}/menu` | GET | 拉取指定门店的菜单数据 |
+| `/api/orders` | POST | 创建订单并进入待支付状态 |
+| `/api/pay/wechat/jsapi` | POST | 模拟获取微信支付签名参数 |
 
-This solution is built to be **"Plug-and-Play"**. Whether it's a high-end French patisserie or a global tea chain, our engine adapts instantly through a simple JSON configuration change, delivering a boutique digital experience at scale.
+---
+
+## 🎯 愿景
+
+> "为 SaaS 的规模化而构建，为品牌的灵魂而设计。"
+
+本方案可直接作为生产环境的原型，只需通过简单的 JSON 配置更改，即可适配从高端烘焙到全球连锁咖啡店的数字化点餐需求。
 
 ---
 *© 2025 SaaS F&B Digital Research Group. All Rights Reserved.*
