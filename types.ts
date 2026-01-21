@@ -26,10 +26,10 @@ export interface StoreContext {
   theme: {
     primary: string;
     secondary: string;
+    borderRadius?: string;
   };
 }
 
-// Added missing MerchantConfig interface definition
 export interface MerchantConfig {
   id: string;
   name: string;
@@ -70,6 +70,7 @@ export interface Product {
   description?: string;
   category: string;
   specs?: string[];
+  stock?: number;
 }
 
 export interface Order {

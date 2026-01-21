@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { ChevronRight, Clock, Search, History, CheckCircle2, XCircle, AlertCircle, ShoppingBag } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { ChevronRight, Clock, Search, History, CheckCircle2, XCircle, AlertCircle, ShoppingBag, Filter } from 'lucide-react';
 import { StoreContext } from '../types';
 
 const ORDERS_MOCK = [
@@ -18,7 +18,7 @@ const ORDERS_MOCK = [
     id: '3662',
     shop: '棠小一（总店）',
     status: '已支付',
-    date: '2025-09-04 19:31:12',
+    date: '2025-05-20 19:31:12', // Updated to be recent for testing
     price: 54.40,
     count: 8,
     image: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=200&h=200&fit=crop',
@@ -28,7 +28,7 @@ const ORDERS_MOCK = [
     id: '6062',
     shop: '棠小一（分店）',
     status: '已支付',
-    date: '2025-08-21 15:16:05',
+    date: '2024-08-21 15:16:05',
     price: 19.45,
     count: 1,
     image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&h=200&fit=crop',
@@ -38,13 +38,44 @@ const ORDERS_MOCK = [
 
 interface OrdersProps {
   onSelectOrder: (id: string) => void;
-  // Use store instead of merchant to match App.tsx usage
   store: StoreContext;
 }
 
 const Orders: React.FC<OrdersProps> = ({ onSelectOrder, store }) => {
   const [activeTab, setActiveTab] = useState('点单');
-  const [activeFilter, setActiveFilter] = useState('全部');
+  const [typeFilter, setTypeFilter] = useState('全部');
+  const [statusFilter, setStatusFilter] = useState('全部');
+  const [dateFilter, setDateFilter] = useState('全部');
+
+  const filteredOrders = useMemo(() => {
+    return ORDERS_MOCK.filter(order => {
+      // Filter by Tab (Mock logic, currently only '点单' has data)
+      if (activeTab !== '点单') return false;
+
+      // Filter by Type
+      if (typeFilter !== '全部' && order.type !== typeFilter) return false;
+
+      // Filter by Status
+      if (statusFilter !== '全部' && order.status !== statusFilter) return false;
+
+      // Filter by Date
+      if (dateFilter !== '全部') {
+        const orderDate = new Date(order.date.replace(/-/g, '/'));
+        const now = new Date();
+        const diffDays = (now.getTime() - orderDate.getTime()) / (1000 * 3600 * 24);
+
+        if (dateFilter === '今日') {
+          return orderDate.toDateString() === now.toDateString();
+        } else if (dateFilter === '近一周') {
+          return diffDays <= 7;
+        } else if (dateFilter === '近一月') {
+          return diffDays <= 30;
+        }
+      }
+
+      return true;
+    });
+  }, [typeFilter, statusFilter, dateFilter, activeTab]);
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -109,111 +140,167 @@ const Orders: React.FC<OrdersProps> = ({ onSelectOrder, store }) => {
         </div>
       </div>
 
-      {/* Filter Chips Toolbar */}
-      <div className="px-5 py-5 flex gap-3 overflow-x-auto scrollbar-hide bg-white/50 backdrop-blur-sm border-b border-gray-100">
-        {['全部', '堂食', '自取', '配送', '快递'].map(filter => (
-          <button
-            key={filter}
-            onClick={() => setActiveFilter(filter)}
-            className={`px-6 py-2.5 rounded-full text-xs font-black transition-all whitespace-nowrap active:scale-95 ${
-              activeFilter === filter 
-              ? 'bg-black text-white shadow-lg' 
-              : 'bg-white text-gray-400 border border-gray-100'
-            }`}
-          >
-            {filter}
-          </button>
-        ))}
+      {/* Filter Section */}
+      <div className="bg-white border-b border-gray-100 px-5 py-4 space-y-4">
+        {/* Status Filter */}
+        <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
+          <div className="shrink-0 text-[10px] font-black text-gray-300 uppercase tracking-widest flex items-center gap-1">
+            <Filter size={12} /> 状态
+          </div>
+          {['全部', '已支付', '已取消'].map(status => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`px-4 py-1.5 rounded-full text-[10px] font-black transition-all whitespace-nowrap active-scale ${
+                statusFilter === status 
+                ? 'bg-black text-white shadow-md' 
+                : 'bg-gray-50 text-gray-400 border border-gray-100'
+              }`}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
+
+        {/* Date Filter */}
+        <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
+          <div className="shrink-0 text-[10px] font-black text-gray-300 uppercase tracking-widest flex items-center gap-1">
+            <Clock size={12} /> 时间
+          </div>
+          {['全部', '今日', '近一周', '近一月'].map(date => (
+            <button
+              key={date}
+              onClick={() => setDateFilter(date)}
+              className={`px-4 py-1.5 rounded-full text-[10px] font-black transition-all whitespace-nowrap active-scale ${
+                dateFilter === date 
+                ? 'bg-brand text-black border border-brand/50 shadow-md' 
+                : 'bg-gray-50 text-gray-400 border border-gray-100'
+              }`}
+              style={dateFilter === date ? { backgroundColor: 'var(--brand-primary)' } : {}}
+            >
+              {date}
+            </button>
+          ))}
+        </div>
+
+        {/* Type Filter */}
+        <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
+          <div className="shrink-0 text-[10px] font-black text-gray-300 uppercase tracking-widest flex items-center gap-1">
+             <ShoppingBag size={12} /> 类型
+          </div>
+          {['全部', '堂食', '自取', '配送', '快递'].map(filter => (
+            <button
+              key={filter}
+              onClick={() => setTypeFilter(filter)}
+              className={`px-4 py-1.5 rounded-full text-[10px] font-black transition-all whitespace-nowrap active-scale ${
+                typeFilter === filter 
+                ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
+                : 'bg-gray-50 text-gray-400 border border-gray-100'
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Enhanced Orders List */}
       <div className="flex-1 px-5 mt-6 space-y-6">
-        {ORDERS_MOCK.map(order => {
-          const config = getStatusConfig(order.status);
-          return (
-            <div 
-              key={order.id} 
-              onClick={() => onSelectOrder(order.id)}
-              className={`relative bg-white rounded-[32px] overflow-hidden shadow-soft active:scale-[0.98] transition-all border border-gray-50/50 flex ${config.isCancelled ? 'opacity-70' : ''}`}
-            >
-              {/* Status Accent Bar */}
-              <div className={`w-1.5 shrink-0 ${config.barColor}`}></div>
-              
-              <div className="flex-1 p-6">
-                <div className="flex justify-between items-start mb-5">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                       <span className={`text-[15px] font-black ${config.isCancelled ? 'text-gray-400' : 'text-gray-900'}`}>{order.shop}</span>
-                       <ChevronRight size={14} className="text-gray-300" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="text-[9px] font-black bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md uppercase tracking-wider">
-                        {order.type}
-                      </div>
-                      <div className="text-[10px] text-gray-300 font-bold flex items-center gap-1">
-                        <Clock size={10} />
-                        {order.date}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Enhanced Status Badge */}
-                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${config.bgColor} ${config.textColor} text-[10px] font-black shadow-sm border border-white/20`}>
-                    {config.icon}
-                    {config.label}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-5 items-center">
-                     <div className="relative group">
-                        <img 
-                          src={order.image} 
-                          alt="product" 
-                          className={`w-14 h-14 rounded-[20px] object-cover bg-gray-50 border border-gray-100 shadow-sm transition-all ${config.isCancelled ? 'grayscale brightness-110 opacity-40' : ''}`} 
-                        />
-                        {order.count > 1 && (
-                          <span className={`absolute -top-1.5 -right-1.5 text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm ${config.isCancelled ? 'bg-gray-200 text-gray-400' : 'bg-black text-white'}`}>
-                            {order.count}
-                          </span>
-                        )}
-                     </div>
-                     <div className="flex flex-col">
-                        <span className="text-[9px] text-gray-300 font-black tracking-widest uppercase mb-0.5">Queue ID</span>
-                        <span className={`text-2xl font-black leading-none ${config.isCancelled ? 'text-gray-300' : 'text-gray-900'}`}>#{order.id}</span>
-                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[10px] text-gray-300 font-bold mb-0.5">实付金额</div>
-                    <div className={`text-xl font-black leading-none ${config.isCancelled ? 'text-gray-300 line-through' : 'text-emerald-600'}`}>
-                      ¥{order.price.toFixed(2)}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Actions for completed orders */}
-                {!config.isCancelled && (
-                  <div className="mt-5 pt-5 border-t border-gray-50 flex gap-3">
-                     <button className="flex-1 py-2.5 rounded-xl border border-gray-100 text-[10px] font-black text-gray-400 active:bg-gray-50 transition-colors uppercase tracking-wider">查看发票</button>
-                     <button className="flex-1 py-2.5 rounded-xl bg-black text-white text-[10px] font-black active:opacity-90 transition-opacity uppercase tracking-wider">再来一单</button>
-                  </div>
-                )}
+        {filteredOrders.length > 0 ? (
+          filteredOrders.map(order => {
+            const config = getStatusConfig(order.status);
+            return (
+              <div 
+                key={order.id} 
+                onClick={() => onSelectOrder(order.id)}
+                className={`relative bg-white rounded-[32px] overflow-hidden shadow-soft active-scale transition-all border border-gray-50/50 flex ${config.isCancelled ? 'opacity-70' : ''}`}
+              >
+                {/* Status Accent Bar */}
+                <div className={`w-1.5 shrink-0 ${config.barColor}`}></div>
                 
-                {config.isCancelled && (
-                  <div className="mt-5 pt-5 border-t border-dashed border-gray-100 flex justify-end">
-                    <button className="px-5 py-2 rounded-xl bg-gray-50 text-[10px] font-black text-gray-400 active:bg-gray-100 transition-colors uppercase tracking-wider">重新下单</button>
+                <div className="flex-1 p-6">
+                  <div className="flex justify-between items-start mb-5">
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2">
+                         <span className={`text-[15px] font-black ${config.isCancelled ? 'text-gray-400' : 'text-gray-900'}`}>{order.shop}</span>
+                         <ChevronRight size={14} className="text-gray-300" />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-[9px] font-black bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                          {order.type}
+                        </div>
+                        <div className="text-[10px] text-gray-300 font-bold flex items-center gap-1">
+                          <Clock size={10} />
+                          {order.date}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Enhanced Status Badge */}
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${config.bgColor} ${config.textColor} text-[10px] font-black shadow-sm border border-white/20`}>
+                      {config.icon}
+                      {config.label}
+                    </div>
                   </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
 
-        <div className="py-20 flex flex-col items-center justify-center gap-4 opacity-20">
-           <ShoppingBag size={40} strokeWidth={1} className="text-gray-400" />
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-5 items-center">
+                       <div className="relative group">
+                          <img 
+                            src={order.image} 
+                            alt="product" 
+                            className={`w-14 h-14 rounded-[20px] object-cover bg-gray-50 border border-gray-100 shadow-sm transition-all ${config.isCancelled ? 'grayscale brightness-110 opacity-40' : ''}`} 
+                          />
+                          {order.count > 1 && (
+                            <span className={`absolute -top-1.5 -right-1.5 text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm ${config.isCancelled ? 'bg-gray-200 text-gray-400' : 'bg-black text-white'}`}>
+                              {order.count}
+                            </span>
+                          )}
+                       </div>
+                       <div className="flex flex-col">
+                          <span className="text-[9px] text-gray-300 font-black tracking-widest uppercase mb-0.5">Queue ID</span>
+                          <span className={`text-2xl font-black leading-none ${config.isCancelled ? 'text-gray-300' : 'text-gray-900'}`}>#{order.id}</span>
+                       </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[10px] text-gray-300 font-bold mb-0.5">实付金额</div>
+                      <div className={`text-xl font-black leading-none ${config.isCancelled ? 'text-gray-300 line-through' : 'text-emerald-600'}`}>
+                        ¥{order.price.toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Actions for completed orders */}
+                  {!config.isCancelled && (
+                    <div className="mt-5 pt-5 border-t border-gray-50 flex gap-3">
+                       <button className="flex-1 py-2.5 rounded-xl border border-gray-100 text-[10px] font-black text-gray-400 active-scale transition-colors uppercase tracking-wider">查看发票</button>
+                       <button className="flex-1 py-2.5 rounded-xl bg-black text-white text-[10px] font-black active:opacity-90 transition-opacity uppercase tracking-wider">再来一单</button>
+                    </div>
+                  )}
+                  
+                  {config.isCancelled && (
+                    <div className="mt-5 pt-5 border-t border-dashed border-gray-100 flex justify-end">
+                      <button className="px-5 py-2 rounded-xl bg-gray-50 text-[10px] font-black text-gray-400 active-scale transition-colors uppercase tracking-wider">重新下单</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="py-20 flex flex-col items-center justify-center gap-4 opacity-20">
+             <ShoppingBag size={40} strokeWidth={1} className="text-gray-400" />
+             <div className="flex flex-col items-center">
+                <span className="text-[10px] font-black text-gray-400 tracking-[0.3em] uppercase">No matching orders</span>
+                <div className="w-12 h-0.5 bg-gray-200 rounded-full mt-3"></div>
+             </div>
+          </div>
+        )}
+
+        <div className="py-20 flex flex-col items-center justify-center gap-4 opacity-10">
+           <History size={32} strokeWidth={1} className="text-gray-400" />
            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-black text-gray-400 tracking-[0.3em] uppercase">No more orders</span>
-              <div className="w-12 h-0.5 bg-gray-200 rounded-full mt-3"></div>
+              <span className="text-[10px] font-black text-gray-400 tracking-[0.3em] uppercase">End of history</span>
            </div>
         </div>
       </div>
